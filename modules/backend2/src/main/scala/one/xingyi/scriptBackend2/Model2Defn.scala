@@ -122,10 +122,10 @@ class Model2LegacyDefn extends DomainDefn[IPerson, Person]("one.xingyi.scriptMod
 }
 
 
-object TestItQuick2 extends App {
-  //  val x: ToScalaCode[IXingYiLensAndLensDefn] => ToScalaCode[InterfaceAndLens[Any, Any]] = ToScalaCode.makeScaleForInterface[Any, Any]
-  //  ToScalaCode.makeScaleForInterface[Any, Any]
-  //  val x = ToScalaCode.makeScalaCode[DomainDefn[Person]]
-  val makeScala = implicitly[ToScalaCode[DomainDefn[IPerson, Person]]]
-  println(makeScala(new Model2Defn))
-}
+//object TestItQuick2 extends App {
+//  //  val x: ToScalaCode[IXingYiLensAndLensDefn] => ToScalaCode[InterfaceAndLens[Any, Any]] = ToScalaCode.makeScaleForInterface[Any, Any]
+//  //  ToScalaCode.makeScaleForInterface[Any, Any]
+//  //  val x = ToScalaCode.makeScalaCode[DomainDefn[Person]]
+//  val makeScala = implicitly[ToScalaCode[DomainDefn[IPerson, Person]]]
+//  println(makeScala(new Model2Defn))
+//}
