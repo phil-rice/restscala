@@ -6,9 +6,16 @@ to allow a new idea to be tested and cuts and pastes from a lot of places.
 This project probably won't be maintained: like all good 'quest' or 'spike' projects it 
 should be thrown away and the learning used to make production code
 
+# Getting going
+
+* Clone this project 
+* Run `sbt compile`
+
+This should download all the dependancies (not many). If it doesn't compile, please contact me!
+
 # Presentations
 
-* [This explains the idea](https://docs.google.com/presentation/d/e/2PACX-1vT1PZ55Mdk-UmI5JZfQqcDPPTezFLr08FcuavETo5anihzLgFH-Bv0avkVa6jWvWn-Gyz5SyRyzETpf/pub?start=false&loop=false&delayms=3000)
+* [This presentation explains the idea](https://docs.google.com/presentation/d/e/2PACX-1vT1PZ55Mdk-UmI5JZfQqcDPPTezFLr08FcuavETo5anihzLgFH-Bv0avkVa6jWvWn-Gyz5SyRyzETpf/pub?start=false&loop=false&delayms=3000)
 
 # Goals
 
