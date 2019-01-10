@@ -1,0 +1,18 @@
+{
+  "id":       "123",
+  "name":     "Phil Rice",
+  "job":      "developer",
+  "employer": {
+    "name": "ING"
+  },
+  "addresses":  [
+    {
+      "line1": "No fixed abode",
+      "line2": "or anywhere"
+    },
+    {
+      "line1": "A second address",
+      "line2": "somewhere"
+    }
+  ]
+}

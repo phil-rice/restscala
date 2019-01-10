@@ -1,0 +1,34 @@
+<h1>Person</h1>
+<h2>Actual result</h2>
+
+{{#original}}
+    <table>
+        <tr>
+            <td>Status</td>
+            <td>{{status}}</td>
+            <td>Headers</td>
+            <td>{{>headers}}</td>
+        </tr>
+    </table>
+    {{{body}}}
+    {{#jsonBody}} <pre class="json">{{.}}</pre>{{/jsonBody}}
+
+
+{{/original}}
+
+
+<div class="recordedCalls"><h1>Recorded Calls</h1>
+    <table class="calls recordedCalls">
+        {{#recorded}}
+            <tr>
+                <td>Request</td>
+                <td>{{>request}}</td>
+            </tr>
+            <tr>
+                <td>Response</td>
+                <td>{{>response}}</td>
+            </tr>
+            <!--<tr><td colspan="2">&nbsp;</td></tr>-->
+        {{/recorded}}
+    </table>
+</div>
