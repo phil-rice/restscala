@@ -9,7 +9,7 @@ should be thrown away and the learning used to make production code
 # Getting going
 
 * Clone this project 
-* Run `sbt compile`
+* Run `sbt compile` from the project root directory
 
 This should download all the dependancies (not many). If it doesn't compile, please contact me!
 
