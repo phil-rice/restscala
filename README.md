@@ -96,3 +96,19 @@ and moving the responsibility of verifying that the interfaces work to the serve
 
 It is of course necessary to have smoke tests, but these are much fewer in number than
 the contract tests.
+
+# What to look at in the code
+
+* Module
+  * model1 - the place that the server defines the contract between the website and the backend
+  * model2 - now that contract has changed. Parts of it are deprecated.
+  * model3 - it's changed even more
+  * backend1 - the backend server using model1 (runs on port 90001)
+  * backend2 - the backend server using model2
+  * backend3 - the backend server using model3
+  * website - the website (runs on port 9000)
+  * core - utility classes, just lifted from another project
+  * json4s - the binding to this library is very light: just through this small module
+  * mustache - provides rendering to produce html
+  * test - probably isn't needed for this project!
+  
