@@ -10,6 +10,19 @@ should be thrown away and the learning used to make production code
 
 * [This explains the idea](https://docs.google.com/presentation/d/e/2PACX-1vT1PZ55Mdk-UmI5JZfQqcDPPTezFLr08FcuavETo5anihzLgFH-Bv0avkVa6jWvWn-Gyz5SyRyzETpf/pub?start=false&loop=false&delayms=3000)
 
+
+# Running
+
+* Run the only application in one of the modules backend1 or backend2 or backend3 (only run one at once)
+  * You can use `sbt run/backend1` but it will never return, so use a terminal or use & if on linux
+* Run the only application in the module website
+  * You can use `sbt run/website` but it will never return, so use a terminal or use & if on linux
+* Goto http://localhost:9000/person/someName/edit
+* edit and look at the recorded calls. Especially look at the structure of the JSON
+* stop the backend, replace it with a different one
+* Rerun and see that the website continues to work
+
+
 # Goals
 
 ## Reduce Coupling between microservices 

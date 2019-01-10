@@ -114,10 +114,10 @@ class Model3AddressDefn extends DomainDefn[IAddress, Address]("one.xingyi.script
 }
 
 
-object TestItQuick2 extends App {
-  //  val x: ToScalaCode[IXingYiLensAndLensDefn] => ToScalaCode[InterfaceAndLens[Any, Any]] = ToScalaCode.makeScaleForInterface[Any, Any]
-  //  ToScalaCode.makeScaleForInterface[Any, Any]
-  //  val x = ToScalaCode.makeScalaCode[DomainDefn[Person]]
-  val makeScala = implicitly[ToScalaCode[DomainDefn[IPerson, Person]]]
-  println(makeScala(new Model3PersonDefn))
-}
+//object TestItQuick2 extends App {
+//  //  val x: ToScalaCode[IXingYiLensAndLensDefn] => ToScalaCode[InterfaceAndLens[Any, Any]] = ToScalaCode.makeScaleForInterface[Any, Any]
+//  //  ToScalaCode.makeScaleForInterface[Any, Any]
+//  //  val x = ToScalaCode.makeScalaCode[DomainDefn[Person]]
+//  val makeScala = implicitly[ToScalaCode[DomainDefn[IPerson, Person]]]
+//  println(makeScala(new Model3PersonDefn))
+//}
