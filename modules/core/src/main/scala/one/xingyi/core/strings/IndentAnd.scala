@@ -2,9 +2,7 @@
 package one.xingyi.core.strings
 
 import javax.swing.JToolBar.Separator
-
 import one.xingyi.core.functions.{Monoid, SemiGroup}
-import one.xingyi.core.service.html.ToHtml
 
 case class IndentAnd[T](indent: Int, lines: List[(Int, T)]) {
   def addLineAndIndent(line: T) = IndentAnd(indent + 1, lines :+ (indent, line))

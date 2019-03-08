@@ -88,7 +88,7 @@ lazy val json4s = (project in file("modules/json4s")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   settings(json4sSettings: _*)
 
-val mustache = (project in file("modules/mustache")).
+val mustache = (project in file("helpers/mustache")).
   dependsOn(core % "test->test;compile->compile").
   aggregate(core).
   settings(mustacheSettings)

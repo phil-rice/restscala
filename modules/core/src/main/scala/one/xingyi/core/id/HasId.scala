@@ -1,4 +1,4 @@
-package one.xingyi.core.builder
+package one.xingyi.core.id
 
 trait HasId[T, ID] extends (T => ID)
 object HasId {

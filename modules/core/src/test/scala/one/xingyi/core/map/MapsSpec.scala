@@ -2,7 +2,7 @@
 package one.xingyi.core.map
 import one.xingyi.core.UtilsSpec
 import Maps._
-import one.xingyi.core.builder.HasId
+import one.xingyi.core.id.HasId
 class MapsSpec extends UtilsSpec {
 
   behavior of "Maps.addTo"

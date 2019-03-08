@@ -2,7 +2,7 @@
 package one.xingyi.scriptBackend3
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.builder.CopyWithNewId
+import one.xingyi.core.id.CopyWithNewId
 import one.xingyi.core.json.{JsonParser, JsonWriter, ObjectProjection}
 import one.xingyi.scriptModel3.IPerson
 

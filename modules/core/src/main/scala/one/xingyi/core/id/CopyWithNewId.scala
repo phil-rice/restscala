@@ -1,4 +1,4 @@
-package one.xingyi.core.builder
+package one.xingyi.core.id
 
 trait CopyWithNewId[T, ID] extends ((ID, T) => T)
 object CopyWithNewId {

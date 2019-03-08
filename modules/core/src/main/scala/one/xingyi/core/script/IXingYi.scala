@@ -3,7 +3,7 @@ package one.xingyi.core.script
 
 import javax.script.{Invocable, ScriptEngine}
 import jdk.nashorn.api.scripting.{ScriptObjectMirror, ScriptUtils}
-import one.xingyi.core.builder.HasId
+import one.xingyi.core.id.HasId
 import one.xingyi.core.http._
 import one.xingyi.core.json._
 import one.xingyi.core.optics.Lens

@@ -13,8 +13,8 @@ import one.xingyi.core.logging._
 import one.xingyi.core.monad._
 import one.xingyi.core.objectify._
 import one.xingyi.core.script.{EntityDetailsUrl, XingyiKleisli}
-import one.xingyi.core.service.html.ToHtml
 import one.xingyi.core.simpleServer.CheapServer
+import one.xingyi.core.strings.ToHtml
 import one.xingyi.scriptExample.createdCode1.{Model1Defn, Person, PersonLine12Ops}
 import org.json4s.JValue
 

@@ -6,8 +6,7 @@ import one.xingyi.core.json.{JsonWriter, ToJsonLib}
 import one.xingyi.core.language.Language._
 import one.xingyi.core.monad.{LocalVariable, Monad, MonadCanFail, MonadWithState}
 import one.xingyi.core.objectify.{RecordedCall, ResultWithRecordedCalls}
-import one.xingyi.core.service.html.ToHtml
-import one.xingyi.core.strings.Strings
+import one.xingyi.core.strings.{Strings, ToHtml}
 
 import scala.language.higherKinds
 import scala.reflect.ClassTag
