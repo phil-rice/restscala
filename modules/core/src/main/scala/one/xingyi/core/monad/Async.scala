@@ -9,11 +9,7 @@ trait Async[M[_]] {
   def async[T](t: => T): M[T]
   def respond[T](m: M[T], fn: Try[T] => Unit): M[T]
   def await[T](m: M[T]): T
-//  def convert[M1[_], T](m: M1[T]): M1[T]
 }
 
-trait MonadConvertor[M1[_], M2[T]] {
-  def apply[T](m1: M1[T]): M2[T]
-}
 
 

@@ -17,16 +17,13 @@ trait AnyLanguage {
     def apply[R](fn: X => R): P => R = { p => fn(thingMaker(p)) }
   }
 
-  def using[T, T1](t: T)(fn: T => T1) = fn(t)
+  def using[T, T1](t: T)(fn: T => T1): T1 = fn(t)
 
   def toSome[X](x: X): Option[X] = Some(x)
 
-  def withValue[X, Y](x: X)(fn: X => Y) = fn(x)
+  def withValue[X, Y](x: X)(fn: X => Y): Y = fn(x)
 
-  def sideeffect[X, Y](x: X)(fn: X => Y) = {
-    fn(x)
-    x
-  }
+  def sideeffect[X, Y](x: X)(fn: X => Y): X = {fn(x); x}
   def sideeffectAll[From, To](seq: ((From, To) => Unit)*): From => To => To = { from => to => seq.foreach(_.apply(from, to)); to }
 
 
@@ -79,11 +76,11 @@ trait AnyLanguage {
   }
 
   implicit class ListOps[X](s: List[X]) {
-    def asString(fn: X => String, separator: String = ",") = s.map(fn).mkString(separator)
-    def foldLeftWithOptions[Acc](initial: Acc)(foldFn: (Acc, X) => Option[Acc]) =
+    def asString(fn: X => String, separator: String = ","): String = s.map(fn).mkString(separator)
+    def foldLeftWithOptions[Acc](initial: Acc)(foldFn: (Acc, X) => Option[Acc]): Option[Acc] =
       s.foldLeft[Option[Acc]](Some(initial)) { case (Some(acc), v) => foldFn(acc, v); case _ => None }
-    def foldLeftWithOptionsEatingExceptions[Acc](initial: Acc)(foldFn: (Acc, X) => Option[Acc]) =
-      foldLeftWithOptions(initial) { (acc, v) => try (foldFn(acc, v)) catch {case e: Exception => None} }
+    def foldLeftWithOptionsEatingExceptions[Acc](initial: Acc)(foldFn: (Acc, X) => Option[Acc]): Option[Acc] =
+      foldLeftWithOptions(initial) { (acc, v) => try foldFn(acc, v) catch {case e: Exception => None} }
     def +(opt: Option[X]): List[X] = opt.fold(s)(_ :: s)
 
   }

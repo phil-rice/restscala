@@ -9,6 +9,7 @@ import one.xingyi.core.success.SuccessState
 import scala.language.higherKinds
 import scala.util.Try
 
+
 case class RequestDetails[Req](req: Req, requestSummary: String)
 
 trait DetailedLogging[T] extends (T => String)

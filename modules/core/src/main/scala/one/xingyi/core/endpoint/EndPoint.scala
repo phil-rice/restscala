@@ -19,54 +19,10 @@ trait EndpointKleisli[M[_]] {
     EndPoint(normalisedPath, matchesServiceRequest, debug)(raw)
 }
 
-trait DisplayRecordedKleisli[M[_]] {
-  protected implicit def monad: Monad[M]
-
-  def recordedCallToString(recordedCall: RecordedCall) =
-    s"""Request: ${recordedCall.req.method}${recordedCall.req.path} ${recordedCall.req.headers.mkString(",")}
-       |Result: ${recordedCall.res.status.code}
-       |${recordedCall.res.body.s}
-       |${recordedCall.res.headers.mkString(",")}
-     """.stripMargin
-
-  def andDisplayRecorded[J](raw: ServiceRequest => M[Option[ServiceResponse]])(implicit jsonWriter: JsonWriter[J],
-                                                                               recordedCalls: InheritableThreadLocal[Seq[RecordedCall]],
-                                                                               toHtml: ToHtml[ResultWithRecordedCalls[ServiceResponse]]): ServiceRequest => M[Option[ServiceResponse]] = {
-    req =>
-      raw(req).map {
-        case Some(sr) =>
-          Some(ServiceResponse(sr.status, Body(toHtml(ResultWithRecordedCalls(sr, recordedCalls.get))), ContentType("text/html")))
-        case None => None
-      }
-  }
-
-}
 
 
-trait ChainKleisli[M[_], Fail] {
-  protected implicit def monad: MonadCanFail[M, Fail]
 
-  protected def failer: Failer[Fail]
 
-  def chain(chains: (ServiceRequest => M[Option[ServiceResponse]])*): ServiceRequest => M[Option[ServiceResponse]] = { serviceRequest: ServiceRequest =>
-    chains.foldLeft[M[Option[ServiceResponse]]](monad.liftM(Option.empty[ServiceResponse])) {
-      case (acc, v) => acc.flatMap[Option[ServiceResponse]] {
-        _ match {
-          case s if s.isDefined => monad.liftM(s)
-          case none => v match {
-            case pf: PartialFunction[ServiceRequest, _] =>
-              if (pf.isDefinedAt(serviceRequest))
-                v(serviceRequest)
-              else
-                monad.liftM(None)
-            case _ =>
-              v(serviceRequest)
-          }
-        }
-      }
-    }
-  }
-}
 
 case class EndPoint[M[_] : Monad, Req, Res](normalisedPath: String, matchesServiceRequest: MatchesServiceRequest, debug: Boolean)(kleisli: Req => M[Res])
                                            (implicit fromServiceRequest: FromServiceRequest[M, Req],
@@ -93,60 +49,6 @@ case class EndPoint[M[_] : Monad, Req, Res](normalisedPath: String, matchesServi
   }
 
   override def toString() = s"Endpoint($normalisedPath, $matchesServiceRequest)"
-}
-
-trait MatchesServiceRequest {
-  def method: Method
-
-  def apply(endpointName: String)(serviceRequest: ServiceRequest): Boolean
-}
-
-
-object MatchesServiceRequest {
-  def fixedPath(method: Method) = FixedPathAndVerb(method)
-
-  def idAtEnd(method: Method) = IdAtEndAndVerb(method)
-
-  def prefixIdCommand(method: Method, command: String) = PrefixThenIdThenCommand(method, command)
-
-}
-
-case class FixedPathAndVerb(method: Method) extends MatchesServiceRequest {
-  override def apply(endpointName: String)(serviceRequest: ServiceRequest): Boolean =
-    serviceRequest.method == method && serviceRequest.uri.path.asUriString == endpointName
-}
-
-case class IdAtEndAndVerb(method: Method) extends MatchesServiceRequest {
-  val startFn = Strings.allButlastSection("/") _
-
-  override def apply(endpointName: String)(serviceRequest: ServiceRequest): Boolean = {
-    val methodMatch = serviceRequest.method == method
-    val startString = startFn(serviceRequest.uri.path.asUriString)
-    val start = startString == endpointName
-    methodMatch && start
-  }
-}
-
-
-case class PrefixThenIdThenCommand(method: Method, command: String) extends MatchesServiceRequest {
-
-  override def apply(endpointName: String)(serviceRequest: ServiceRequest): Boolean = {
-    try {
-      val path = serviceRequest.path.asUriString
-      //    println("path: " + path + ", endpoint name: " + endpointName)
-      Strings.startsWithAndSnips(endpointName)(path).map { rest =>
-        val id = Strings.allButlastSection("/")(rest)
-        val actualCommand = Strings.lastSection("/")(rest)
-        //      println("id: " + id + ",  command: " + command)
-        val result = id.indexOf("/") == -1 && actualCommand == command && serviceRequest.method == method
-        //      println("result: " + result)
-        result
-      }.getOrElse(false)
-    } catch {
-      case e: Exception =>
-        throw new RuntimeException(s"problem in $this", e)
-    }
-  }
 }
 
 
