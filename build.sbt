@@ -115,7 +115,9 @@ lazy val model3 = (project in file("demo/model3")).
 
 lazy val backendShared = (project in file("demo/backendShared")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
-  dependsOn(model1 % "test->test;compile->compile").aggregate(model1).
+//  dependsOn(model1 % "test->test;compile->compile").aggregate(model1).
+  dependsOn(json4s % "test->test;compile->compile").
+  dependsOn(simplewebframework % "test->test;compile->compile").
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
@@ -123,7 +125,6 @@ lazy val backend1 = (project in file("demo/backend1")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(backendShared % "test->test;compile->compile").aggregate(backendShared).
   dependsOn(model1 % "test->test;compile->compile").aggregate(model1).
-  dependsOn(json4s % "test->test;compile->compile").
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
@@ -131,7 +132,7 @@ lazy val backend2 = (project in file("demo/backend2")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(backendShared % "test->test;compile->compile").aggregate(backendShared).
   dependsOn(model2 % "test->test;compile->compile").aggregate(model2).
-  dependsOn(json4s % "test->test;compile->compile").
+//  dependsOn(json4s % "test->test;compile->compile").
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
@@ -139,7 +140,7 @@ lazy val backend3 = (project in file("demo/backend3")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(backendShared % "test->test;compile->compile").aggregate(backendShared).
   dependsOn(model3 % "test->test;compile->compile").aggregate(model3).
-  dependsOn(json4s % "test->test;compile->compile").
+//  dependsOn(json4s % "test->test;compile->compile").
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 

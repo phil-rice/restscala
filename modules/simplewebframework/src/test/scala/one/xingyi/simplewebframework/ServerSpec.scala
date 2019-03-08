@@ -7,7 +7,7 @@ import one.xingyi.core.UtilsSpec
 import one.xingyi.core.http._
 import one.xingyi.core.language.Language._
 import one.xingyi.core.monad.IdentityMonad
-import one.xingyi.core.simpleServer.{EndpointHandler, HttpUtils, SimpleHttpServer}
+import one.xingyi.simplewebframework.simpleServer.{EndpointHandler, HttpUtils, SimpleHttpServer}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 

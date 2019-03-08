@@ -5,6 +5,7 @@ import java.util.concurrent.{ExecutorService, Executors}
 
 import com.sun.net.httpserver.HttpExchange
 import one.xingyi.core.http.{Body, ContentType, ServiceResponse, Status}
+import one.xingyi.core.simpleServer.Streams
 
 object HttpUtils {
   def makeDefaultExecutor: ExecutorService = Executors.newFixedThreadPool(100)

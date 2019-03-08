@@ -12,10 +12,10 @@ import one.xingyi.core.logging._
 import one.xingyi.core.monad._
 import one.xingyi.core.objectify._
 import one.xingyi.core.script.{EntityDetailsUrl, XingyiKleisli}
-import one.xingyi.core.simpleServer.CheapServer
 import one.xingyi.core.strings.ToHtml
 import one.xingyi.scriptExample.createdCode1.{Model1Defn, Person, PersonLine12Ops}
 import one.xingyi.simplewebframework.HttpClient
+import one.xingyi.simplewebframework.simpleServer.CheapServer
 import org.json4s.JValue
 
 import scala.language.higherKinds
@@ -69,7 +69,7 @@ class Website[M[_] : Async, Fail: Failer : LogRequestAndResult, J: JsonParser : 
 
 
   val editPersonForm = backend |+| recordCalls |+| xingyify[DisplayEditPersonFormRequest, DisplayEditPersonFormResponse](Model1Defn) |+| endpoint[DisplayEditPersonFormRequest, DisplayEditPersonFormResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("get"), "edit")) |+| andDisplayRecorded[J]
-//  val editPersonPost = backend |+| recordCalls |+| xingyify[EditPersonRequest, EditPersonResponse](Model1Defn) |+| endpoint[EditPersonRequest, EditPersonResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("post"), "edit")) |+| andDisplayRecorded[J]
+  //  val editPersonPost = backend |+| recordCalls |+| xingyify[EditPersonRequest, EditPersonResponse](Model1Defn) |+| endpoint[EditPersonRequest, EditPersonResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("post"), "edit")) |+| andDisplayRecorded[J]
   val endpoints: ServiceRequest => M[Option[ServiceResponse]] = chain(index, person, editPersonPost, editPersonForm, keepalive)
 
 }
