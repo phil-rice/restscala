@@ -3,25 +3,24 @@ package one.xingyi.core.language
 
 import java.text.MessageFormat
 
-import one.xingyi.core.{FunctionFixture, UtilsSpec}
-import one.xingyi.core.cache._
 import one.xingyi.core.http._
+import one.xingyi.core.language.Language._
 import one.xingyi.core.logging._
 import one.xingyi.core.metrics.{CountMetricValue, MetricValue, PutMetrics, ReportData}
 import one.xingyi.core.monad.{Async, IdentityMonad, Liftable, MonadCanFailWithException}
-import one.xingyi.core.time.{MockTimeService, NanoTimeService, RandomDelay}
-import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito._
-import Language._
 import one.xingyi.core.profiling.{ProfileService, TryProfileData}
 import one.xingyi.core.retry.{RetryConfig, RetryService}
+import one.xingyi.core.time.{MockTimeService, NanoTimeService, RandomDelay}
+import one.xingyi.core.{FunctionFixture, UtilsSpec}
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 
 import scala.concurrent.duration.Duration
 import scala.language.higherKinds
 import scala.util.{Failure, Success, Try}
 
 class MicroserviceBuilderForTest[M[_], Fail](implicit val async: Async[M], val monad: MonadCanFailWithException[M, Fail], val detailedLoggingForSR: DetailedLogging[ServiceResponse]) extends MicroserviceBuilder[M, Fail] with MockitoSugar {
-  override val cacheFactory: CacheFactory[M] = mock[CacheFactory[M]]
+  //  override val cacheFactory: CacheFactory[M] = mock[CacheFactory[M]]
   override implicit val timeService: NanoTimeService = new MockTimeService
   implicit val log = new RememberLoggingAdapter
   override val logReqAndResult: LogRequestAndResult[Fail] = new AbstractLogRequestAndResult[Fail]() {
@@ -158,19 +157,6 @@ abstract class MicroserviceBuilderSpec[M[_], Fail](monadName: String)(implicit v
     val pService = (service |+| b.profile[ServiceRequest, ServiceResponse](profileData)).asInstanceOf[ProfileService[M, ServiceRequest, ServiceResponse]]
     pService.delegate shouldBe service
     pService.profileData shouldBe profileData
-  }
-
-  it should "have a cache method that wraps the service with the result from the cache factory" in {
-    val b = builder
-    val service = mock[ServiceRequest => M[ServiceResponse]]
-    val profileData = mock[TryProfileData]
-    val cache = mock[Cache[M, ServiceRequest, ServiceResponse]]
-
-    implicit val s: ShouldCacheResult[ServiceResponse] = _ => true
-    implicit val ck: CachableKey[ServiceRequest] = CachableKey.cachableKeyDefault[ServiceRequest]
-
-    when(b.cacheFactory.apply("cacheName", service)) thenReturn cache
-    service |+| b.cache[ServiceRequest, ServiceResponse]("cacheName") shouldBe cache
   }
 
 

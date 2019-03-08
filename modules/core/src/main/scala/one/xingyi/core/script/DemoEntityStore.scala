@@ -4,7 +4,7 @@ package one.xingyi.core.script
 import one.xingyi.core.builder.CopyWithNewId
 import one.xingyi.core.json.ObjectProjection
 import one.xingyi.core.language.AnyLanguage._
-import one.xingyi.core.monad.{Monad, MonadCanFailWithException}
+import one.xingyi.core.monad.MonadCanFailWithException
 
 import scala.language.higherKinds
 

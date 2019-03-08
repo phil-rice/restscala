@@ -2,7 +2,6 @@
 package one.xingyi.core.language
 
 import one.xingyi.core.aggregate.{EnrichKleisli, MergeKleisli}
-import one.xingyi.core.cache.{CacheFactory, CacheKleisli}
 import one.xingyi.core.endpoint.{ChainKleisli, EndPoint, EndpointKleisli}
 import one.xingyi.core.http._
 import one.xingyi.core.logging.{LogRequestAndResult, LoggingKleisli}
@@ -40,13 +39,12 @@ trait AndAfterKleisli[M[_]] {
 }
 
 trait MicroserviceBuilder[M[_], Fail] extends ObjectifyKleisli[M, Fail] with  HttpKlesili[M] with MetricsKleisli[M, Fail] with LoggingKleisli[M, Fail]
-  with ChainKleisli[M, Fail] with EndpointKleisli[M] with RetryKleisli[M, Fail] with ProfileKleisli[M, Fail] with CacheKleisli[M] with LiftFunctionKleisli[M]
+  with ChainKleisli[M, Fail] with EndpointKleisli[M] with RetryKleisli[M, Fail] with ProfileKleisli[M, Fail] with LiftFunctionKleisli[M]
   with MergeKleisli[M] with EnrichKleisli[M] with AndAfterKleisli[M] {
 
   protected implicit def async: Async[M]
   protected implicit def monad: MonadCanFailWithException[M, Fail]
-  protected def cacheFactory: CacheFactory[M]
-  protected implicit def timeService: NanoTimeService
+    protected implicit def timeService: NanoTimeService
   protected def logReqAndResult: LogRequestAndResult[Fail]
   protected def failer: Failer[Fail]
   protected def putMetrics: PutMetrics
