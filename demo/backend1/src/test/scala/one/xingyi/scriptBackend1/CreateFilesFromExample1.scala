@@ -4,6 +4,7 @@ package one.xingyi.scriptBackend1
 import java.io.File
 
 import one.xingyi.core.UtilsSpec
+import one.xingyi.core.codemaker.{DomainCD, DomainDefnToCodeDom, HasLensCodeMaker, ToScalaCode}
 import one.xingyi.core.script._
 import one.xingyi.core.strings.Files
 import one.xingyi.scriptModel1.IPerson
@@ -32,12 +33,12 @@ class CreateFilesFromExample1 extends UtilsSpec {
     Files.printToFile(javascriptFile)(pw => pw.print(javascript))
   }
 
-//  it should "make the scala" ignore {
-//    ToScalaCode.makeScalaCode[IPerson, Person]
-//    val codeMaker = implicitly[ToScalaCode[DomainDefn[IPerson, Person]]]
-//    val scala = codeMaker(new Model1Defn)
-//    Files.printToFile(scalaFile)(pw => pw.print(scala))
-//  }
+  //  it should "make the scala" ignore {
+  //    ToScalaCode.makeScalaCode[IPerson, Person]
+  //    val codeMaker = implicitly[ToScalaCode[DomainDefn[IPerson, Person]]]
+  //    val scala = codeMaker(new Model1Defn)
+  //    Files.printToFile(scalaFile)(pw => pw.print(scala))
+  //  }
   it should "make the scala new way" in {
     val domainCd = implicitly[DomainDefnToCodeDom].apply(new Model1Defn)
     val scala = implicitly[ToScalaCode[DomainCD]] apply domainCd

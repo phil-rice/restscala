@@ -4,9 +4,9 @@ package one.xingyi.scriptBackend2
 import java.io.File
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.script.{DomainDefn, HasLensCodeMaker, Javascript, ToScalaCode}
+import one.xingyi.core.codemaker.HasLensCodeMaker
+import one.xingyi.core.script.Javascript
 import one.xingyi.core.strings.Files
-import one.xingyi.scriptModel2.IPerson
 
 class CreateFilesFromExample2 extends UtilsSpec {
 

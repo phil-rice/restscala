@@ -4,8 +4,6 @@ package one.xingyi.scriptSharedBackend
 import java.io.File
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.script.{DomainDefn, HasLensCodeMaker, Javascript, ToScalaCode}
-import one.xingyi.core.strings.Files
 
 class CreateFilesFromExample extends UtilsSpec {
 

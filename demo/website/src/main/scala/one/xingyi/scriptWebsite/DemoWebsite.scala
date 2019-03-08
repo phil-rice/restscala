@@ -63,17 +63,14 @@ class Website[M[_] : Async, Fail: Failer : LogRequestAndResult, J: JsonParser : 
   val x: EditPersonRequest => M[EditPersonResponse] = backend |+| recordCalls |+| editXingYi[EditPersonRequest, Person, PersonLine12Ops, EditPersonResponse](Model1Defn, {
     (par, line12Ops) => (line12Ops.line1Lens.setFn(par.newLine1) andThen line12Ops.line2Lens.setFn(par.newLine2))
   })
-  val editPersonPost2 = backend |+| recordCalls |+| editXingYi[EditPersonRequest, Person, PersonLine12Ops, EditPersonResponse](Model1Defn, {
-
-    (par, line12Ops) => (line12Ops.line1Lens.setFn(par.newLine1) andThen line12Ops.line2Lens.setFn(par.newLine2))
-
-
+  val editPersonPost = backend |+| recordCalls |+| editXingYi[EditPersonRequest, Person, PersonLine12Ops, EditPersonResponse](Model1Defn, {
+    (editPersonRequest, line12Ops) => (line12Ops.line1Lens.setFn(editPersonRequest.newLine1) andThen line12Ops.line2Lens.setFn(editPersonRequest.newLine2))
   }) |+| endpoint[EditPersonRequest, EditPersonResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("post"), "edit")) |+| andDisplayRecorded[J]
 
 
   val editPersonForm = backend |+| recordCalls |+| xingyify[DisplayEditPersonFormRequest, DisplayEditPersonFormResponse](Model1Defn) |+| endpoint[DisplayEditPersonFormRequest, DisplayEditPersonFormResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("get"), "edit")) |+| andDisplayRecorded[J]
-  val editPersonPost = backend |+| recordCalls |+| xingyify[EditPersonRequest, EditPersonResponse](Model1Defn) |+| endpoint[EditPersonRequest, EditPersonResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("post"), "edit")) |+| andDisplayRecorded[J]
-  val endpoints: ServiceRequest => M[Option[ServiceResponse]] = chain(index, person, editPersonPost2, editPersonForm, keepalive)
+//  val editPersonPost = backend |+| recordCalls |+| xingyify[EditPersonRequest, EditPersonResponse](Model1Defn) |+| endpoint[EditPersonRequest, EditPersonResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("post"), "edit")) |+| andDisplayRecorded[J]
+  val endpoints: ServiceRequest => M[Option[ServiceResponse]] = chain(index, person, editPersonPost, editPersonForm, keepalive)
 
 }
 
