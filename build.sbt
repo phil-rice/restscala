@@ -79,7 +79,7 @@ lazy val test = (project in file("modules/test")).
   settings(publishSettings: _*).
   dependsOn(core % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
-  dependsOn(mustache % "test->test;compile->compile").
+//  dependsOn(mustache % "test->test;compile->compile").
   aggregate(core)
 
 
@@ -88,10 +88,23 @@ lazy val json4s = (project in file("modules/json4s")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   settings(json4sSettings: _*)
 
+val simplewebframework = (project in file("helpers/simplewebframework")).
+  dependsOn(core % "test->test;compile->compile").
+  aggregate(core).
+  settings(mustacheSettings)
+
 val mustache = (project in file("helpers/mustache")).
   dependsOn(core % "test->test;compile->compile").
   aggregate(core).
   settings(mustacheSettings)
+
+val helpersTest = (project in file("helpers/helpersTest")).
+  dependsOn(mustache % "test->test;compile->compile").
+  dependsOn(json4s % "test->test;compile->compile").
+  aggregate(mustache,json4s).
+  settings(mustacheSettings)
+
+
 lazy val model1 = (project in file("demo/model1")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(json4s % "test->test;compile->compile").
@@ -152,6 +165,7 @@ lazy val website = (project in file("demo/website")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(json4s % "test->test;compile->compile").
   dependsOn(mustache % "test->test;compile->compile").
+  dependsOn(simplewebframework % "test->test;compile->compile").
   dependsOn(model1 % "test->test;compile->compile").aggregate(model1).
   //  dependsOn(tagless % "test->test;compile->compile").aggregate(tagless).
   settings(publishArtifact := false).
@@ -163,11 +177,12 @@ val restScala = (project in file(".")).
   settings(publishArtifact := false).
   aggregate(
     core, //
-    mustache, //
     backend1,
     backend2,
     backend3,
     website,
     json4s, //
+    simplewebframework,
+    helpersTest,
     test
   )

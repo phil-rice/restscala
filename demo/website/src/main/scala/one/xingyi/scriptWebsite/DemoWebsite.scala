@@ -3,7 +3,6 @@ package one.xingyi.scriptWebsite
 
 import javax.net.ssl.SSLContext
 import one.xingyi.cddmustache.{Mustache, NameToMustacheTemplate}
-import one.xingyi.core.client.HttpClient
 import one.xingyi.core.endpoint.{ChainKleisli, DisplayRecordedKleisli, EndpointKleisli, MatchesServiceRequest}
 import one.xingyi.core.http._
 import one.xingyi.core.json._
@@ -16,6 +15,7 @@ import one.xingyi.core.script.{EntityDetailsUrl, XingyiKleisli}
 import one.xingyi.core.simpleServer.CheapServer
 import one.xingyi.core.strings.ToHtml
 import one.xingyi.scriptExample.createdCode1.{Model1Defn, Person, PersonLine12Ops}
+import one.xingyi.simplewebframework.HttpClient
 import org.json4s.JValue
 
 import scala.language.higherKinds
@@ -60,16 +60,15 @@ class Website[M[_] : Async, Fail: Failer : LogRequestAndResult, J: JsonParser : 
 
   val person = backend |+| recordCalls |+| xingyify[PersonAddressRequest, PersonAddressResponse](Model1Defn) |+| endpoint[PersonAddressRequest, PersonAddressResponse]("/person", MatchesServiceRequest.idAtEnd(Method("get"))) |+| andDisplayRecorded[J]
 
- val x: EditPersonRequest => M[EditPersonResponse] = backend|+| recordCalls |+|editXingYi[EditPersonRequest, Person, PersonLine12Ops, EditPersonResponse](Model1Defn, {
-   (par, line12Ops) => (line12Ops.line1Lens.setFn(par.newLine1) andThen line12Ops.line2Lens.setFn(par.newLine2))
- })
+  val x: EditPersonRequest => M[EditPersonResponse] = backend |+| recordCalls |+| editXingYi[EditPersonRequest, Person, PersonLine12Ops, EditPersonResponse](Model1Defn, {
+    (par, line12Ops) => (line12Ops.line1Lens.setFn(par.newLine1) andThen line12Ops.line2Lens.setFn(par.newLine2))
+  })
   val editPersonPost2 = backend |+| recordCalls |+| editXingYi[EditPersonRequest, Person, PersonLine12Ops, EditPersonResponse](Model1Defn, {
 
     (par, line12Ops) => (line12Ops.line1Lens.setFn(par.newLine1) andThen line12Ops.line2Lens.setFn(par.newLine2))
 
 
   }) |+| endpoint[EditPersonRequest, EditPersonResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("post"), "edit")) |+| andDisplayRecorded[J]
-
 
 
   val editPersonForm = backend |+| recordCalls |+| xingyify[DisplayEditPersonFormRequest, DisplayEditPersonFormResponse](Model1Defn) |+| endpoint[DisplayEditPersonFormRequest, DisplayEditPersonFormResponse]("/person", MatchesServiceRequest.prefixIdCommand(Method("get"), "edit")) |+| andDisplayRecorded[J]
