@@ -5,11 +5,9 @@ import one.xingyi.core.aggregate.{EnrichKleisli, MergeKleisli}
 import one.xingyi.core.endpoint.{ChainKleisli, EndPoint, EndpointKleisli}
 import one.xingyi.core.http._
 import one.xingyi.core.logging.{LogRequestAndResult, LoggingKleisli}
-import one.xingyi.core.metrics.{MetricsKleisli, PutMetrics}
 import one.xingyi.core.monad._
 import one.xingyi.core.objectify.ObjectifyKleisli
 import one.xingyi.core.profiling.ProfileKleisli
-import one.xingyi.core.retry.RetryKleisli
 import one.xingyi.core.time.NanoTimeService
 
 import scala.language.higherKinds
@@ -38,8 +36,8 @@ trait AndAfterKleisli[M[_]] {
 
 }
 
-trait MicroserviceBuilder[M[_], Fail] extends ObjectifyKleisli[M, Fail] with  HttpKlesili[M] with MetricsKleisli[M, Fail] with LoggingKleisli[M, Fail]
-  with ChainKleisli[M, Fail] with EndpointKleisli[M] with RetryKleisli[M, Fail] with ProfileKleisli[M, Fail] with LiftFunctionKleisli[M]
+trait MicroserviceBuilder[M[_], Fail] extends ObjectifyKleisli[M, Fail] with  HttpKlesili[M] with LoggingKleisli[M, Fail]
+  with ChainKleisli[M, Fail] with EndpointKleisli[M]  with ProfileKleisli[M, Fail] with LiftFunctionKleisli[M]
   with MergeKleisli[M] with EnrichKleisli[M] with AndAfterKleisli[M] {
 
   protected implicit def async: Async[M]
@@ -47,7 +45,6 @@ trait MicroserviceBuilder[M[_], Fail] extends ObjectifyKleisli[M, Fail] with  Ht
     protected implicit def timeService: NanoTimeService
   protected def logReqAndResult: LogRequestAndResult[Fail]
   protected def failer: Failer[Fail]
-  protected def putMetrics: PutMetrics
 
   def debugEndpoints(endpoints: Map[String, String])(original: ServiceRequest => M[Option[ServiceResponse]]) = original
 }

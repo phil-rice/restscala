@@ -3,7 +3,7 @@ package one.xingyi.core.monad
 
 import java.util.concurrent.TimeUnit
 
-import one.xingyi.core.concurrency.DelayedFuture
+
 import one.xingyi.core.functions.Functions
 import one.xingyi.core.local.ExecutionContextWithLocal
 
@@ -38,7 +38,6 @@ class AsyncForScalaFuture(implicit ex: ExecutionContextWithLocal) extends Async[
   override def fail[T](f: Throwable): Future[T] = Future.failed(f)
   override def flattenM[T](seq: Seq[Future[T]]): Future[Seq[T]] = Future.sequence(seq)
   override def async[T](t: => T) = Future(t)
-  override def delay[T](duration: Duration)(block: => Future[T]): Future[T] = DelayedFuture(duration)(block)
   override def flatMapEither[T, T1](m: Future[T], fn: Either[Throwable, T] => Future[T1]): Future[T1] = m.transformWith {
     case Success(t) => fn(Right(t))
     case Failure(t) => fn(Left(t))
@@ -62,7 +61,6 @@ class AsyncForScalaFutureEither[Fail] {
       }
     }
     override def await[T](m: FutureEither[T]): T = Await.result(m, Duration(5, TimeUnit.SECONDS)).fold(f => throw new HadUnexpectedFailException(f), Functions.identity)
-    override def delay[T](duration: Duration)(block: => FutureEither[T]): FutureEither[T] = DelayedFuture(duration)(block)
     override def flatMap[T, T1](m: FutureEither[T], fn: T => FutureEither[T1]): FutureEither[T1] = {
       m.flatMap {
         case Right(t) => fn(t)

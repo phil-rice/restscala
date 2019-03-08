@@ -6,16 +6,13 @@ import java.text.MessageFormat
 import one.xingyi.core.http._
 import one.xingyi.core.language.Language._
 import one.xingyi.core.logging._
-import one.xingyi.core.metrics.{CountMetricValue, MetricValue, PutMetrics, ReportData}
 import one.xingyi.core.monad.{Async, IdentityMonad, Liftable, MonadCanFailWithException}
 import one.xingyi.core.profiling.{ProfileService, TryProfileData}
-import one.xingyi.core.retry.{RetryConfig, RetryService}
-import one.xingyi.core.time.{MockTimeService, NanoTimeService, RandomDelay}
+import one.xingyi.core.time.{MockTimeService, NanoTimeService}
 import one.xingyi.core.{FunctionFixture, UtilsSpec}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 
-import scala.concurrent.duration.Duration
 import scala.language.higherKinds
 import scala.util.{Failure, Success, Try}
 
@@ -28,7 +25,6 @@ class MicroserviceBuilderForTest[M[_], Fail](implicit val async: Async[M], val m
       MessageFormat.format(messagePrefix, strings: _*)
   }
   override val failer: Failer[Fail] = mock[Failer[Fail]]
-  override val putMetrics: PutMetrics = mock[PutMetrics]
   override val httpFactory: HttpFactory[M, ServiceRequest, ServiceResponse] = mock[HttpFactory[M, ServiceRequest, ServiceResponse]]
 }
 
@@ -94,42 +90,6 @@ abstract class MicroserviceBuilderSpec[M[_], Fail](monadName: String)(implicit v
 
   }
 
-  it should "have a metrics that records the metrics - success path" in {
-    val b = builder
-    val service = mock[ServiceRequest => M[ServiceResponse]]
-    val metricsData = Map("result" -> CountMetricValue)
-    implicit val rd: ReportData[ServiceResponse] = new ReportData[ServiceResponse] {
-      override def apply[Fail](prefix: String, duration: Long): Try[Either[Fail, ServiceResponse]] => Map[String, MetricValue] = {
-        fn(Success(Right(serviceResponse)), metricsData)
-      }
-    }
-    when(service.apply(serviceRequest)) thenReturn serviceResponse.liftM
-    val mService: ServiceRequest => M[ServiceResponse] = service |+| b.metrics("somePrefix")
-
-
-    mService(serviceRequest).await() shouldBe serviceResponse
-
-    verify(b.putMetrics, times(1)).apply(metricsData)
-  }
-  it should "have a metrics that records the metrics - exception path" in {
-    val b = builder
-    val service = mock[ServiceRequest => M[ServiceResponse]]
-    val metricsData = Map("result" -> CountMetricValue)
-    implicit val rd: ReportData[ServiceResponse] = new ReportData[ServiceResponse] {
-      override def apply[Fail](prefix: String, duration: Long): Try[Either[Fail, ServiceResponse]] => Map[String, MetricValue] = {
-        fn(Failure(exception), metricsData)
-      }
-    }
-    when(service.apply(serviceRequest)) thenReturn exception.liftException[M, ServiceResponse]
-    val mService: ServiceRequest => M[ServiceResponse] = service |+| b.metrics("somePrefix")
-
-
-    intercept[RuntimeException](mService(serviceRequest).await()) shouldBe exception
-
-    verify(b.putMetrics, times(1)).apply(metricsData)
-  }
-
-
   it should "have a logging that wraps the delegate in a logging service" ignore {
     val pattern = "pattern {0} {2}"
     val b = builder
@@ -140,15 +100,6 @@ abstract class MicroserviceBuilderSpec[M[_], Fail](monadName: String)(implicit v
     lService.logReqAndResult shouldBe builder.logReqAndResult
   }
 
-  it should "have a retry that wraps the service in a RetryService" in {
-    val b = builder
-    val service = mock[ServiceRequest => M[ServiceResponse]]
-    val retryConfig = RetryConfig(1, RandomDelay(Duration.fromNanos(1000)))
-
-    val rService = (service |+| b.retry[ServiceRequest, ServiceResponse](retryConfig)).asInstanceOf[RetryService[M, Fail, ServiceRequest, ServiceResponse]]
-    rService.delegate shouldBe service
-    rService.retryConfig shouldBe retryConfig
-  }
 
   it should "have a profile that wraps the service in a profile service" in {
     val b = builder

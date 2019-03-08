@@ -3,8 +3,6 @@ package one.xingyi.core.strings
 
 import java.io.{ByteArrayOutputStream, PrintStream, StringWriter}
 
-import one.xingyi.core.metrics.PrintlnPutMetrics
-
 object Strings {
   def withoutStringBefore(beforeChar:  Char)(s: String):String = s.dropWhile(_ != beforeChar).drop(1)
 

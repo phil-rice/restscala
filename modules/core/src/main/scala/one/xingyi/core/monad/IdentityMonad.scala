@@ -16,7 +16,6 @@ object IdentityMonad {
   implicit object MonadForIdentityMonad extends MonadWithState[IdentityMonad] with MonadCanFailWithException[IdentityMonad, Throwable] with Async[IdentityMonad] {
     override def async[T](t: => T): IdentityMonad[T] = Try(t).fold(exception, liftM)
     override def await[T](m: IdentityMonad[T]): T = m.value.fold(e => throw e, Functions.identity)
-    override def delay[T](duration: Duration)(block: => IdentityMonad[T]): IdentityMonad[T] = block
     override def liftM[T](t: T): IdentityMonad[T] = IdentityMonad(Success(t), Map())
 
     override def map[T, T1](m: IdentityMonad[T], fn: T => T1): IdentityMonad[T1] = IdentityMonad[T1](m.value.map(fn), m.state)
