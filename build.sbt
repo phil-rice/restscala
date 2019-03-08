@@ -2,7 +2,7 @@ import sbt.url
 
 
 val versions = new {
-  val scala = "2.12.6"
+  val scala = "2.12.8"
   //  val scala = "2.12.1"
   val finatra = "18.2.0"
   val scalatest = "3.0.5"
@@ -92,28 +92,28 @@ val mustache = (project in file("modules/mustache")).
   dependsOn(core % "test->test;compile->compile").
   aggregate(core).
   settings(mustacheSettings)
-lazy val model1 = (project in file("modules/model1")).
+lazy val model1 = (project in file("demo/model1")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(json4s % "test->test;compile->compile").
   //  dependsOn(tagless % "test->test;compile->compile").aggregate(tagless).
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
-lazy val model2 = (project in file("modules/model2")).
+lazy val model2 = (project in file("demo/model2")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(json4s % "test->test;compile->compile").
   //  dependsOn(tagless % "test->test;compile->compile").aggregate(tagless).
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
-lazy val model3 = (project in file("modules/model3")).
+lazy val model3 = (project in file("demo/model3")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(json4s % "test->test;compile->compile").
   //  dependsOn(tagless % "test->test;compile->compile").aggregate(tagless).
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
-lazy val backendShared = (project in file("modules/backendShared")).
+lazy val backendShared = (project in file("demo/backendShared")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(model1 % "test->test;compile->compile").aggregate(model1).
   dependsOn(json4s % "test->test;compile->compile").
@@ -121,7 +121,7 @@ lazy val backendShared = (project in file("modules/backendShared")).
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
-lazy val backend1 = (project in file("modules/backend1")).
+lazy val backend1 = (project in file("demo/backend1")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(backendShared % "test->test;compile->compile").aggregate(backendShared).
   dependsOn(model1 % "test->test;compile->compile").aggregate(model1).
@@ -130,7 +130,7 @@ lazy val backend1 = (project in file("modules/backend1")).
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
-lazy val backend2 = (project in file("modules/backend2")).
+lazy val backend2 = (project in file("demo/backend2")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(backendShared % "test->test;compile->compile").aggregate(backendShared).
   dependsOn(model2 % "test->test;compile->compile").aggregate(model2).
@@ -139,7 +139,7 @@ lazy val backend2 = (project in file("modules/backend2")).
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
-lazy val backend3 = (project in file("modules/backend3")).
+lazy val backend3 = (project in file("demo/backend3")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(backendShared % "test->test;compile->compile").aggregate(backendShared).
   dependsOn(model3 % "test->test;compile->compile").aggregate(model3).
@@ -148,7 +148,7 @@ lazy val backend3 = (project in file("modules/backend3")).
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
-lazy val website = (project in file("modules/website")).
+lazy val website = (project in file("demo/website")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(json4s % "test->test;compile->compile").
   dependsOn(mustache % "test->test;compile->compile").
