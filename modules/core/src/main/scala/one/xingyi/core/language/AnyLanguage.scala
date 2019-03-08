@@ -82,7 +82,5 @@ trait AnyLanguage {
     def foldLeftWithOptionsEatingExceptions[Acc](initial: Acc)(foldFn: (Acc, X) => Option[Acc]): Option[Acc] =
       foldLeftWithOptions(initial) { (acc, v) => try foldFn(acc, v) catch {case e: Exception => None} }
     def +(opt: Option[X]): List[X] = opt.fold(s)(_ :: s)
-
   }
-
 }

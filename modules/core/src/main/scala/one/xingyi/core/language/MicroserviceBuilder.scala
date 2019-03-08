@@ -18,9 +18,7 @@ trait MicroserviceComposers[M[_]] {
     def |+|[Req, Res](fn: (RawReq => M[RawRes]) => (Req => M[Res])): (Req => M[Res]) = fn(wrapper)
     def |++|[Req, Res](fn: (RawReq => M[RawRes]) => EndPoint[M, Req, Res]): EndPoint[M, Req, Res] = fn(wrapper)
   }
-
 }
-
 
 trait AndAfterKleisli[M[_]] {
   protected implicit def monad: Monad[M]

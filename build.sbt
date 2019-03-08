@@ -79,7 +79,6 @@ lazy val test = (project in file("modules/test")).
   settings(publishSettings: _*).
   dependsOn(core % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
-//  dependsOn(mustache % "test->test;compile->compile").
   aggregate(core)
 
 
@@ -88,7 +87,7 @@ lazy val json4s = (project in file("modules/json4s")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   settings(json4sSettings: _*)
 
-val simplewebframework = (project in file("helpers/simplewebframework")).
+val simplewebframework = (project in file("modules/simplewebframework")).
   dependsOn(core % "test->test;compile->compile").
   aggregate(core).
   settings(mustacheSettings)
@@ -101,7 +100,7 @@ val mustache = (project in file("helpers/mustache")).
 val helpersTest = (project in file("helpers/helpersTest")).
   dependsOn(mustache % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
-  aggregate(mustache,json4s).
+  aggregate(mustache, json4s).
   settings(mustacheSettings)
 
 

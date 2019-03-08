@@ -83,13 +83,10 @@ class AsyncForScalaFutureEither[Fail] {
 }
 
 object AsyncForScalaFuture {
-
   object ImplicitsForTest {
     implicit val executionContext = new ExecutionContextWithLocal(ExecutionContext.Implicits.global)
   }
-
   implicit def defaultAsyncForScalaFuture(implicit ec: ExecutionContextWithLocal) = new AsyncForScalaFuture
-
 }
 
 
