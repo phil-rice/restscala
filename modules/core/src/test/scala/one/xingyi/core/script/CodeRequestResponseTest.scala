@@ -4,9 +4,12 @@ import one.xingyi.core.UtilsSpec
 import one.xingyi.core.http._
 import one.xingyi.core.json.JsonWriter
 import one.xingyi.core.monad.IdentityMonad
+import one.xingyi.core.serverMediaType.LensLanguage
 
-abstract class CodeRequestResponseTest[J: JsonWriter] extends UtilsSpec with ScriptFixture {
+abstract class CodeRequestResponseTest[J: JsonWriter, L <: LensLanguage] extends UtilsSpec with ScriptFixture[L] {
 
+  def expectedCodeString1: String
+  def expectedCodeString2: String
 
   behavior of "CodeRequest"
 
@@ -22,7 +25,7 @@ abstract class CodeRequestResponseTest[J: JsonWriter] extends UtilsSpec with Scr
     response.status shouldBe Status(200)
     response.headers shouldBe List(ContentType("application/json"))
     response.body.s.noWhiteSpace shouldBe
-    s"""[{"name":"ParentDomainForTest1","code":{"Javascript":"2gX9qynNFOcahh7bmqApJP787bIMJebrvuWn1Ddz-Jg=","LensLanguageForTest":"U3Gc7tk1W0abCV50AxAiJvuu4TBZZ56Wi5WPFND-2Lg="}},{"name":"ParentDomainForTest2","code":{"Javascript":"to3fmQzyuC-5ryhueR2T0RB3NI3VImLvDSMoS5SkAyA=","LensLanguageForTest":"U3Gc7tk1W0abCV50AxAiJvuu4TBZZ56Wi5WPFND-2Lg="}}]""".stripMargin.noWhiteSpace
+    s"""[{"name":"ParentDomainForTest1","code":{$expectedCodeString1}},{"name":"ParentDomainForTest2","code":{$expectedCodeString2}}]""".stripMargin.noWhiteSpace
   }
 
 }

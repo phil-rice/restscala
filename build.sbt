@@ -76,7 +76,11 @@ lazy val javascriptServer = (project in file("modules/javascriptserver")).
   dependsOn(core % "test->test;compile->compile").
   settings(publishSettings: _*)
 
-lazy val client = (project in file("modules/client")).
+lazy val javascriptClient= (project in file("modules/javascriptclient")).
+  dependsOn(core % "test->test;compile->compile").
+  settings(publishSettings: _*)
+
+lazy val lensDslClient = (project in file("modules/lensDslClient")).
   dependsOn(core % "test->test;compile->compile").
   settings(publishSettings: _*)
 
@@ -85,8 +89,9 @@ lazy val test = (project in file("modules/test")).
   settings(publishSettings: _*).
   dependsOn(core % "test->test;compile->compile").
   dependsOn(lensdslServer % "test->test;compile->compile").
+  dependsOn(lensDslClient % "test->test;compile->compile").
   dependsOn(javascriptServer % "test->test;compile->compile").
-  dependsOn(client % "test->test;compile->compile").
+  dependsOn(javascriptClient % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
   aggregate(core)
 
@@ -162,7 +167,8 @@ lazy val backend3 = (project in file("demo/backend3")).
 
 lazy val website = (project in file("demo/website")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
-  dependsOn(client % "test->test;compile->compile").
+  dependsOn(javascriptClient % "test->test;compile->compile").
+  dependsOn(lensDslClient % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
   dependsOn(mustache % "test->test;compile->compile").
   dependsOn(simplewebframework % "test->test;compile->compile").

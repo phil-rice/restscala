@@ -1,6 +1,7 @@
 /** Copyright (c) 2019, Phil Rice. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package one.xingyi.core.script
 import one.xingyi.core.codemaker._
+import one.xingyi.core.crypto.Digestor
 import one.xingyi.core.id.IdLens
 import one.xingyi.core.json._
 import one.xingyi.core.optics.Lens
@@ -100,13 +101,23 @@ case class LensLanguageForTest() extends LensLanguage {
 }
 
 object LensLanguageForTest {
+  val lensLanguageForTestCode = "lensLanguageForTestCode"
   implicit object lensMakerForLensLanguageForTest extends LensCodeMaker[LensLanguageForTest] {
-    override def apply[SharedE, DomainE](domainDefn: DomainDefn[SharedE, DomainE]): String = "lensLanguageForTestCode"
+    override def apply[SharedE, DomainE](domainDefn: DomainDefn[SharedE, DomainE]): String = {
+      lensLanguageForTestCode
+    }
   }
 }
 
-trait ScriptFixture {
-  implicit val lensLanguages = new LensLanguages(List(Javascript: Javascript, LensLanguageForTest()))
+trait ScriptFixtureWithTestLanguage extends ScriptFixture[LensLanguageForTest] {
+  override def defaultLensLanguage: LensLanguageForTest = LensLanguageForTest()
+  override implicit def lensCodeMaker: LensCodeMaker[LensLanguageForTest] = LensLanguageForTest.lensMakerForLensLanguageForTest
+  def lensLanguageDigest = Digestor.default.apply(LensLanguageForTest.lensLanguageForTestCode)
+}
+trait ScriptFixture[L <: LensLanguage] {
+  def defaultLensLanguage: L
+  implicit def lensCodeMaker: LensCodeMaker[L]
+  implicit val lensLanguages = new LensLanguages(List(defaultLensLanguage))
   val dom1 = new ParentDomainForTest1
   val dom2 = new ParentDomainForTest2
 
@@ -126,8 +137,8 @@ trait ScriptFixture {
   val code0 = domainList.domains(0).code
   val code1 = domainList.domains(1).code
 
-  val js0Hash = code0(Javascript).hash
-  val js1Hash = code1(Javascript).hash
+  val js0Hash = code0(defaultLensLanguage).hash
+  val js1Hash = code1(defaultLensLanguage).hash
 
 
   val sharedPackageName = new ParentDomainForTest1().sharedPackageName

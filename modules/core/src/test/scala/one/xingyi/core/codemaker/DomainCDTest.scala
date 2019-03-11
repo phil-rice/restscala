@@ -2,9 +2,9 @@
 package one.xingyi.core.codemaker
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.script.ScriptFixture
+import one.xingyi.core.script.{ScriptFixture, ScriptFixtureWithTestLanguage}
 
-class CodeDomTest extends UtilsSpec with ScriptFixture {
+class CodeDomTest extends UtilsSpec with ScriptFixtureWithTestLanguage {
 
   behavior of "DomainCd"
 

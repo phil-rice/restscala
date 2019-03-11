@@ -6,7 +6,7 @@ import one.xingyi.core.http._
 import one.xingyi.core.json.JsonWriter
 import one.xingyi.core.monad.IdentityMonad
 
-abstract class CodeDetailsRequestTest[J: JsonWriter] extends UtilsSpec with ScriptFixture {
+abstract class CodeDetailsRequestTest[J: JsonWriter] extends UtilsSpec with ScriptFixtureWithTestLanguage {
   behavior of "CodeDetailsRequest"
 
   it should "have a FromServiceRequest" in {

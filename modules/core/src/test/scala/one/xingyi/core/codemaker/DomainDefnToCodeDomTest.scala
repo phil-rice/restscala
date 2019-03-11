@@ -2,9 +2,9 @@
 package one.xingyi.core.codemaker
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.script.{ParentDomainForTest1, ParentDomainForTest2, ScriptFixture}
+import one.xingyi.core.script.{ParentDomainForTest1, ParentDomainForTest2, ScriptFixture, ScriptFixtureWithTestLanguage}
 
-class DomainDefnToCodeDomTest extends UtilsSpec with ScriptFixture {
+class DomainDefnToCodeDomTest extends UtilsSpec with ScriptFixtureWithTestLanguage {
 
   behavior of "DomainDefnToCodeDom"
 

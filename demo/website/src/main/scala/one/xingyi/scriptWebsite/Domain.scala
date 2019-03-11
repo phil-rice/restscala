@@ -5,7 +5,7 @@ import one.xingyi.core.http._
 import one.xingyi.core.json._
 import one.xingyi.core.language.AnyLanguage._
 import one.xingyi.core.monad.Monad
-import one.xingyi.core.script.{EntityDetailsUrl, FromEntityDetailsResponse}
+import one.xingyi.core.script.{ClientPreferedLanguage, EntityDetailsUrl, FromEntityDetailsResponse}
 import one.xingyi.core.strings.{Strings, ToHtml}
 import one.xingyi.scriptExample.createdCode1.{Person, PersonLine12Ops}
 
@@ -18,7 +18,7 @@ object PersonAddressRequest {
   implicit val entityDetails = EntityDetailsUrl[PersonAddressRequest](Uri("http://127.0.0.1:9001/person"))
 
   //TODO security flaw here. OK for now
-  implicit def fromEntityDetailsRequest: FromEntityDetailsResponse[PersonAddressRequest] =
+  implicit def fromEntityDetailsRequest(implicit clientPreferedLanguage: ClientPreferedLanguage): FromEntityDetailsResponse[PersonAddressRequest] =
     (req, sd) => edr => ServiceRequest(Method("get"), Uri(edr.urlPattern.replace("<id>", req.name)), headers = List(Header("accept", sd.contentType)), body = None)
 
   implicit def fromServiceRequest[M[_] : Monad]: FromServiceRequest[M, PersonAddressRequest] = {
@@ -69,7 +69,7 @@ object DisplayEditPersonFormRequest {
 
   implicit def entityUrl(implicit personEntityUrl: EntityDetailsUrl[PersonAddressRequest]): EntityDetailsUrl[DisplayEditPersonFormRequest] = EntityDetailsUrl(personEntityUrl.url)
 
-  implicit def fromEntityDetailsResponse: FromEntityDetailsResponse[DisplayEditPersonFormRequest] = {
+  implicit def fromEntityDetailsResponse(implicit clientPreferedLanguage: ClientPreferedLanguage): FromEntityDetailsResponse[DisplayEditPersonFormRequest] = {
     (req, sd) => edr => ServiceRequest(Method("get"), Uri(edr.urlPattern.replace("<id>", req.name)), headers = List(Header("accept", sd.contentType)), body = None)
 
   }
@@ -103,7 +103,7 @@ object EditPersonRequest {
 
   implicit def entityUrl(implicit personEntityUrl: EntityDetailsUrl[PersonAddressRequest]): EntityDetailsUrl[EditPersonRequest] = EntityDetailsUrl(personEntityUrl.url)
 
-  implicit def fromEntityDetailsResponse: FromEntityDetailsResponse[EditPersonRequest] = {
+  implicit def fromEntityDetailsResponse(implicit clientPreferedLanguage: ClientPreferedLanguage): FromEntityDetailsResponse[EditPersonRequest] = {
     (req, sd) =>
       edr =>
         println(s"in fromEntityDetailsResponse. Req is $req sd is $sd and edr is $edr")

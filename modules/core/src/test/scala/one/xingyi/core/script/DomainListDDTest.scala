@@ -3,8 +3,9 @@ package one.xingyi.core.script
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.codemaker.{DomainAndMethodListToDisplayDom, DomainListDD}
 import one.xingyi.core.json.{JsonWriter, ToJsonLib}
+import one.xingyi.core.serverMediaType.LensLanguage
 
-abstract class DomainListDDTest[J](implicit jsonWriter: JsonWriter[J]) extends UtilsSpec with ScriptFixture {
+abstract class DomainListDDTest[J,L <: LensLanguage](implicit jsonWriter: JsonWriter[J]) extends UtilsSpec with ScriptFixture[L] {
 
   behavior of "DomainListDD to Json"
 

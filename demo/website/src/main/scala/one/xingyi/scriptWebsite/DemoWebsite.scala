@@ -11,7 +11,7 @@ import one.xingyi.core.language.MicroserviceComposers
 import one.xingyi.core.logging._
 import one.xingyi.core.monad._
 import one.xingyi.core.objectify._
-import one.xingyi.core.script.{EntityDetailsUrl, XingyiKleisli}
+import one.xingyi.core.script.{ClientPreferedLanguage, EntityDetailsUrl, XingyiKleisli}
 import one.xingyi.core.strings.ToHtml
 import one.xingyi.scriptExample.createdCode1.{Model1Defn, Person, PersonLine12Ops}
 import one.xingyi.simplewebframework.HttpClient
@@ -28,6 +28,7 @@ case class MustacheToHtml[J: JsonWriter, T](templateName: String, title: String)
 
 class Website[M[_] : Async, Fail: Failer : LogRequestAndResult, J: JsonParser : JsonWriter]
 (implicit val monad: MonadCanFailWithException[M, Fail] with MonadWithState[M],
+ clientPreferedLanguage: ClientPreferedLanguage,
  val failer: Failer[Fail],
  val detailedLoggingForSR: DetailedLogging[ServiceResponse],
  val logReqAndResult: LogRequestAndResult[Fail],
@@ -85,7 +86,7 @@ object Website extends App {
 
   println("Checking backend")
 
-
+  implicit val clientPreferedLanguage = ClientPreferedLanguage("Javascript")
   val website = new Website[IdentityMonad, Throwable, JValue]
   val server = new CheapServer[IdentityMonad, Throwable](9000, website.endpoints)
   println("running")

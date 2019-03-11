@@ -5,7 +5,8 @@ import one.xingyi.core.http.Failer.failerForThrowable
 import one.xingyi.core.logging._
 import one.xingyi.core.monad.IdentityMonad
 import one.xingyi.core.script.IEntityStore
-import one.xingyi.core.serverMediaType.{DomainDefnToDetails, DomainList, Javascript, LensLanguages}
+import one.xingyi.core.serverMediaType.{DomainDefnToDetails, DomainList, LensLanguages}
+import one.xingyi.javascript.server.Javascript
 import one.xingyi.json4s.Json4sParser._
 import one.xingyi.json4s.Json4sWriter._
 import one.xingyi.scriptModel1.IPerson
@@ -18,14 +19,15 @@ import scala.language.higherKinds
 
 object Backend1 extends App {
   implicit val logger: LoggingAdapter = PrintlnLoggingAdapter
-  implicit val lensLanguages = LensLanguages(List(Javascript: Javascript))
+  val defaultLanguage: Javascript = Javascript
+  implicit val lensLanguages = LensLanguages(List(defaultLanguage))
 
   import SimpleLogRequestAndResult._
 
   implicit val domainList = DomainList(DomainDefnToDetails(new Model1Defn))
   implicit val personStore = IEntityStore.demo[IdentityMonad, Throwable, IPerson, Person]
 
-  val personEndpoints = new EntityEndpoints[IdentityMonad, Throwable, JValue, IPerson, Person]
+  val personEndpoints = new EntityEndpoints[IdentityMonad, Throwable, JValue, IPerson, Person](defaultLanguage)
 
   val backend = new CheapServer[IdentityMonad, Throwable](9001, personEndpoints.endpoints)
 

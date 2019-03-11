@@ -34,12 +34,14 @@ trait Domain {
   def mirror: Object
 }
 
+case class ClientPreferedLanguage(s: String)
+
 trait ServerDomain {
   def lens: List[String]
 
   val lensString = lens.mkString(",")
 
-  val contentType: String = s"application/xingyi.$lensString"
+  def contentType(implicit language: ClientPreferedLanguage): String = s"application/xingyi.${language.s}.$lensString"
 
 }
 

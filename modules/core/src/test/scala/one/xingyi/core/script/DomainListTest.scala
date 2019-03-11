@@ -2,10 +2,12 @@
 package one.xingyi.core.script
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.exceptions.CannotRespondToQuery
-import one.xingyi.core.serverMediaType.{IXingYiHeaderToLensNames, Javascript, LensLanguage, XingYiHeaderDetails}
+import one.xingyi.core.serverMediaType.{IXingYiHeaderToLensNames, LensLanguage, XingYiHeaderDetails}
 import org.mockito.Mockito._
-class DomainListTest extends UtilsSpec with ScriptFixture {
+abstract class DomainListTest[L <: LensLanguage] extends UtilsSpec with ScriptFixture[L] {
 
+
+  //TODO Let's have a second lens language for test
 
   behavior of "DomainList"
 
@@ -17,29 +19,29 @@ class DomainListTest extends UtilsSpec with ScriptFixture {
 
   it should "select the first if no lens are specified" in {
     implicit val toLensNames = mock[IXingYiHeaderToLensNames]
-    when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(Javascript, Set()))
-    domainList.accept(Some("someAcceptHeader"), Javascript) shouldBe (Javascript,details1)
+    when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(defaultLensLanguage, Set()))
+    domainList.accept(Some("someAcceptHeader"), defaultLensLanguage) shouldBe(defaultLensLanguage, details1)
   }
 
   it should "select the first if it matches" in {
     implicit val toLensNames = mock[IXingYiHeaderToLensNames]
-    when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(Javascript, details1.lensNames))
-    domainList.accept(Some("someAcceptHeader"), Javascript) shouldBe (Javascript,details1)
+    when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(defaultLensLanguage, details1.lensNames))
+    domainList.accept(Some("someAcceptHeader"), defaultLensLanguage) shouldBe(defaultLensLanguage, details1)
   }
 
   it should "select the second if the first doesn't match but the second does" in {
     implicit val toLensNames = mock[IXingYiHeaderToLensNames]
-    when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(Javascript, details2.lensNames))
-    domainList.accept(Some("someAcceptHeader"), Javascript) shouldBe (Javascript,details2)
+    when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(defaultLensLanguage, details2.lensNames))
+    domainList.accept(Some("someAcceptHeader"), defaultLensLanguage) shouldBe(defaultLensLanguage, details2)
   }
 
   it should "blow up if it can't match" in {
     implicit val toLensNames = mock[IXingYiHeaderToLensNames]
-    when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(Javascript, Set("some", "rubbish", "names")))
-    intercept[CannotRespondToQuery](domainList.accept(Some("someAcceptHeader"), Javascript)).getMessage.noWhiteSpace shouldBe
-    """Header[Some(someAcceptHeader)]
+    when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(defaultLensLanguage, Set("some", "rubbish", "names")))
+    intercept[CannotRespondToQuery](domainList.accept(Some("someAcceptHeader"), defaultLensLanguage)).getMessage.noWhiteSpace shouldBe
+    s"""Header[Some(someAcceptHeader)]
       | normalised[names,rubbish,some],
-      | language: Javascript
+      | language: ${defaultLensLanguage.name}
       | headerAsSet: Set(some, rubbish, names)
       | failures:
       | Domain ParentDomainForTest1

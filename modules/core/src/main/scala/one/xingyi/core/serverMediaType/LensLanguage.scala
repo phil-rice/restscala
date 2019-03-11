@@ -13,7 +13,7 @@ trait LensLanguage {
   def name: String;
   /** This is the mediatype of the returned code. Examples are 'application/javascript' and 'application/lensdsl' */
   def mediaType: MediaType
-  override def toString: String = Strings.removeOptional$(getClass.getSimpleName)
+  override def toString: String = Strings.removeOptional$(getClass.getSimpleName).toLowerCase
 }
 
 @implicitNotFound("""There must be a LensCodeMaker[$L] in scope""")
