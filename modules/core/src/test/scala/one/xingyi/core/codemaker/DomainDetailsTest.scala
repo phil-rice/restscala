@@ -12,7 +12,7 @@ class DomainDetailsTest extends UtilsSpec with ScriptFixture {
   behavior of "DomainDetails"
 
   it should "be created from a domain defn" in {
-    implicit val javascript = mock[HasLensCodeMaker[Javascript]]
+    implicit val javascript = mock[LensCodeMaker[Javascript]]
     when(javascript.apply(domainForTest)) thenReturn "some Javascript code"
     implicit val scala = mock[ToScalaCode[DomainDefn[IParent, ParentForTest]]]
     when(scala.apply(domainForTest)) thenReturn "some Scala code"

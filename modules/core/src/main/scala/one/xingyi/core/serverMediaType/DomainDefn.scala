@@ -17,15 +17,12 @@ object DomainDefn {
   implicit def domainDefnToScala[SharedE, DomainE: ClassTag](implicit domainDefnToCodeDom: DomainDefnToCodeDom, domainCdToScala: ToScalaCode[DomainCD]): ToScalaCode[DomainDefn[SharedE, DomainE]] = { defn => domainCdToScala(domainDefnToCodeDom(defn)) }
 }
 
-
 class DomainDefn[SharedE, DomainE: ClassTag](val sharedPackageName: String, val renderers: List[String],
                                              val interfacesToProjections: List[InterfaceAndProjection[_, _]] = List(),
                                              val manual: List[IXingYiSharedOps[XingYiManualPath, _]] = List())
                                             (implicit objectProjection: ObjectProjection[SharedE, DomainE], projectionToLensDefns: ProjectionToLensDefns) {
   def rootName: String = ClassTags.nameOf[DomainE]
-
   def packageName: String = getClass.getPackage.getName
-
   def domainName: String = getClass.getSimpleName
 
   val projectionLens: Map[IXingYiLens[_, _], LensDefn[_, _]] = interfacesToProjections.flatMap(x => projectionToLensDefns(x.projection)).distinct.toMap

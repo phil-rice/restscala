@@ -3,24 +3,25 @@ package one.xingyi.core.script
 
 import one.xingyi.core.codemaker._
 import one.xingyi.core.json.{LensDefn, ManualLensDefn, SimpleLensDefn}
+import one.xingyi.core.serverMediaType.DomainDefn
 
 import scala.io.Source
 
 trait Javascript extends CodeFragment {
-  override def mediaType: MediaType = MediaType( "application/javascript")
+  override def mediaType: MediaType = MediaType("application/javascript")
 }
 
 object Javascript extends Javascript {
   implicit def lensCodeMaker: LensCodeMaker[Javascript] = new JsMaker
 
-  implicit def header: Header[Javascript] = name => Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("header.js")).mkString
 
-  implicit def renderer: Renderer[Javascript] = _ => ""
-
-  implicit def footer: Footer[Javascript] = () => ""
 }
 
 class JsMaker extends LensCodeMaker[Javascript] {
+
+  def header: Header[Javascript] = name => Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("header.js")).mkString
+  def renderer: Renderer[Javascript] = _ => ""
+  def footer: Footer[Javascript] = () => ""
 
   def oneLens(name: String) = s"""lens("$name")"""
 
@@ -31,9 +32,12 @@ class JsMaker extends LensCodeMaker[Javascript] {
     case names => s"""function $name(){ return ${manyLens(names)}; }"""
   }
 
-  override def apply(lensDefn: LensDefn[_, _]): String =
+  def fromLensDefns(lensDefn: LensDefn[_, _]): String =
     lensDefn match {
       case s: SimpleLensDefn[_, _] => lens(s.name, s.names)
       case s: ManualLensDefn[_, _] => s.javascript
     }
+  override def apply[SharedE, DomainE](defn: DomainDefn[SharedE, DomainE]): String =
+    (header(defn) :: defn.renderers.map(renderer) ::: defn.lens.map(fromLensDefns) ::: List(footer())).mkString("\n")
+
 }

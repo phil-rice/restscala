@@ -12,7 +12,10 @@ trait Renderer[L] extends (String => String)
 
 trait Footer[L] extends (() => String)
 
-trait LensCodeMaker[L] extends (LensDefn[_, _] => String)
+
+trait LensCodeMaker[L <: CodeFragment] {
+  def apply[SharedE, DomainE](anyRef: DomainDefn[SharedE, DomainE]): String
+}
 
 case class MediaType(s: String) extends AnyVal
 
@@ -22,16 +25,4 @@ trait CodeFragment {
 }
 
 
-trait HasLensCodeMaker[L <: CodeFragment] {
-  def apply[SharedE, DomainE](anyRef: DomainDefn[SharedE, DomainE]): String
-}
-
-class SimpleHasLensCodeMaker[L <: CodeFragment](implicit lensCodeMaker: LensCodeMaker[L], header: Header[L], render: Renderer[L], footer: Footer[L]) extends HasLensCodeMaker[L] {
-  def apply[SharedE, DomainE](defn: DomainDefn[SharedE, DomainE]): String =
-    (header(defn) :: defn.renderers.map(render) ::: defn.lens.map(lensCodeMaker) ::: List(footer())).mkString("\n")
-}
-
-object HasLensCodeMaker {
-  implicit def maker[L <: CodeFragment : Header : Renderer : Footer : LensCodeMaker]: HasLensCodeMaker[L] = new SimpleHasLensCodeMaker[L]
-}
 

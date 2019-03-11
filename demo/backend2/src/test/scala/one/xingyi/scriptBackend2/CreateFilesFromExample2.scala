@@ -4,7 +4,7 @@ package one.xingyi.scriptBackend2
 import java.io.File
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.codemaker.HasLensCodeMaker
+import one.xingyi.core.codemaker.LensCodeMaker
 import one.xingyi.core.script.Javascript
 import one.xingyi.core.strings.Files
 
@@ -26,7 +26,7 @@ class CreateFilesFromExample2 extends UtilsSpec {
   it should "make the javascript" in {
     checkCorrectDirectory
 
-    val codeMaker = implicitly[HasLensCodeMaker[Javascript]]
+    val codeMaker = implicitly[LensCodeMaker[Javascript]]
     val javascript = codeMaker.apply(new Model2Defn)
     Files.printToFile(javascriptFile)(pw => pw.print(javascript))
   }
