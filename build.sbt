@@ -68,11 +68,15 @@ lazy val scalatestSettings = publishSettings ++ Seq(
 lazy val core = (project in file("modules/core")).
   settings(publishSettings: _*)
 
-lazy val dsllens = (project in file("modules/dsllens")).
+lazy val lensdslServer = (project in file("modules/lensdslserver")).
   dependsOn(core % "test->test;compile->compile").
   settings(publishSettings: _*)
 
-lazy val javascriptlens = (project in file("modules/javascriptlens")).
+lazy val javascriptServer = (project in file("modules/javascriptserver")).
+  dependsOn(core % "test->test;compile->compile").
+  settings(publishSettings: _*)
+
+lazy val scalaclient = (project in file("modules/scalaclient")).
   dependsOn(core % "test->test;compile->compile").
   settings(publishSettings: _*)
 
@@ -80,8 +84,8 @@ lazy val javascriptlens = (project in file("modules/javascriptlens")).
 lazy val test = (project in file("modules/test")).
   settings(publishSettings: _*).
   dependsOn(core % "test->test;compile->compile").
-  dependsOn(dsllens % "test->test;compile->compile").
-  dependsOn(javascriptlens % "test->test;compile->compile").
+  dependsOn(lensdslServer % "test->test;compile->compile").
+  dependsOn(javascriptServer % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
   aggregate(core)
 
@@ -91,7 +95,7 @@ lazy val json4s = (project in file("modules/json4s")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   settings(json4sSettings: _*)
 
-val simplewebframework = (project in file("modules/simplewebframework")).
+val simplewebframework = (project in file("helpers/simplewebframework")).
   dependsOn(core % "test->test;compile->compile").
   aggregate(core).
   settings(mustacheSettings)
@@ -125,8 +129,8 @@ lazy val model3 = (project in file("demo/model3")).
 
 lazy val backendShared = (project in file("demo/backendShared")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
-  dependsOn(dsllens % "test->test;compile->compile").
-  dependsOn(javascriptlens % "test->test;compile->compile").
+  dependsOn(lensdslServer % "test->test;compile->compile").
+  dependsOn(javascriptServer % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
   dependsOn(simplewebframework % "test->test;compile->compile").
   settings(publishArtifact := false).
