@@ -2,26 +2,12 @@
 package one.xingyi.core.serverMediaType
 
 import one.xingyi.core.codemaker._
-import one.xingyi.core.crypto.Digestor
-import one.xingyi.core.http.{Get, Method, Post, Put}
+import one.xingyi.core.exceptions.CannotRespondToQuery
 import one.xingyi.core.json._
 import one.xingyi.core.reflection.{ClassTags, Reflect}
-import one.xingyi.core.script
-import one.xingyi.core.script.Javascript
 
-import scala.collection.Set
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
-
-case class XingYiManualPath[A, B](prefix: String, lensType: String, javascript: String, isList: Boolean = false)(implicit val classTag: ClassTag[A], val childClassTag: ClassTag[B]) {
-  def makeManualLens(name: String) = ManualLensDefn[A, B](prefix, isList, javascript)
-}
-
-case class InterfaceAndProjection[Shared, Domain](projection: ObjectProjection[Shared, Domain], sharedOps: IXingYiSharedOps[IXingYiLens, Shared])
-object InterfaceAndProjection {
-  implicit def tupleTo[Shared, Domain](tuple: (IXingYiSharedOps[IXingYiLens, Shared], ObjectProjection[Shared, Domain])) =
-    InterfaceAndProjection(tuple._2, tuple._1)
-}
 
 object DomainDefn {
   val xingyiHeaderPrefix = "application/xingyi."
@@ -31,21 +17,6 @@ object DomainDefn {
   implicit def domainDefnToScala[SharedE, DomainE: ClassTag](implicit domainDefnToCodeDom: DomainDefnToCodeDom, domainCdToScala: ToScalaCode[DomainCD]): ToScalaCode[DomainDefn[SharedE, DomainE]] = { defn => domainCdToScala(domainDefnToCodeDom(defn)) }
 }
 
-trait MethodData[DomainE] {
-  def method: Method
-  def urlPattern: String
-}
-case class GetMethodData[DomainE](urlPattern: String, fn: String => DomainE) extends MethodData[DomainE] {
-  override def method: Method = Get
-}
-case class PutMethodData[DomainE](urlPattern: String, fn: (DomainE, String) => DomainE) extends MethodData[DomainE] {
-  override def method: Method = Put
-}
-case class PostMethodData[DomainE](urlPattern: String, fn: String => DomainE) extends MethodData[DomainE] {
-  override def method: Method = Post
-}
-
-case class DomainAndMethods[SharedE, DomainE](methodDatas: List[MethodData[DomainE]], defn: DomainDefn[SharedE, DomainE])
 
 class DomainDefn[SharedE, DomainE: ClassTag](val sharedPackageName: String, val renderers: List[String],
                                              val interfacesToProjections: List[InterfaceAndProjection[_, _]] = List(),
@@ -72,70 +43,22 @@ class DomainDefn[SharedE, DomainE: ClassTag](val sharedPackageName: String, val 
        |""".stripMargin
 }
 
-trait DomainDefnToDetails[SharedE, DomainE] extends (DomainDefn[SharedE, DomainE] => DomainDetails[SharedE, DomainE])
-
-object DomainDefnToDetails {
-  def apply[SharedE, DomainE: ClassTag](domainDefn: DomainDefn[SharedE, DomainE])(implicit domainDefnToDetails: DomainDefnToDetails[SharedE, DomainE]) = domainDefnToDetails(domainDefn)
-
-  implicit def default[SharedE, DomainE](implicit javascript: HasLensCodeMaker[Javascript],
-                                         scala: ToScalaCode[DomainDefn[SharedE, DomainE]]): DomainDefnToDetails[SharedE, DomainE] = { defn =>
-    val scalaDetails = CodeDetails(scala(defn))
-    val javascriptDetails = CodeDetails(javascript(defn))
-    DomainDetails[SharedE, DomainE](defn.domainName, defn.packageName, defn.accepts, javascriptDetails.hash,
-      defn.renderers,
-      defn.lens.map(_.name).toSet,
-      Map(Javascript -> javascriptDetails, ScalaCode -> scalaDetails))
-  }
+case class XingYiManualPath[A, B](prefix: String, lensType: String, javascript: String, isList: Boolean = false)(implicit val classTag: ClassTag[A], val childClassTag: ClassTag[B]) {
+  def makeManualLens(name: String) = ManualLensDefn[A, B](prefix, isList, javascript)
 }
 
-case class CodeDetails(code: String)(implicit digestor: Digestor) {
-  val hash = digestor(code)
+case class InterfaceAndProjection[Shared, Domain](projection: ObjectProjection[Shared, Domain], sharedOps: IXingYiSharedOps[IXingYiLens, Shared])
+object InterfaceAndProjection {
+  implicit def tupleTo[Shared, Domain](tuple: (IXingYiSharedOps[IXingYiLens, Shared], ObjectProjection[Shared, Domain])) =
+    InterfaceAndProjection(tuple._2, tuple._1)
 }
 
-case class DomainDetails[SharedE, DomainE](name: String, packageName: String, accept: String, codeHeader: String, renderers: Seq[String], lensNames: Set[String], code: Map[CodeFragment, CodeDetails]) {
-  def normalisedLens = DomainDetails.stringsToString(lensNames)
-
-  def isDefinedAt(lensNames: Set[String]) = lensNames.forall(this.lensNames.contains)
-}
-
-object DomainDetails {
-  def stringsToString(set: Iterable[String]) = set.toList.sorted.mkString(",")
-}
-
-
-class CannotRespondToQuery(header: Option[String], set: Set[String], normalisedHeader: String, failures: List[(String, Set[String], Set[String])]) extends
-  RuntimeException(
-    s"""Header[$header]
-       | normalised[$normalisedHeader],
-       | headerAsSet: ${set.toList.mkString(",")}
-       | failures:
-       | ${
-      failures.map { case (name, allowed, failures) =>
-        s"""Domain $name
-           |   Allowed: ${allowed.toList.mkString(",")}
-           |   Failed: ${failures.toList.mkString(",")}
-           |""".stripMargin
-      }.mkString(";")
-    }""".stripMargin)
+case class DomainAndMethods[SharedE, DomainE](methodDatas: List[MethodData[DomainE]], defn: DomainDefn[SharedE, DomainE])
 
 object DomainList {
   def stringToSet(s: String) = s.split(",").filterNot(_.isEmpty).toSet
 }
-trait IXingYiHeaderToLensNames {
-  def apply(xingyiHeader: Option[String]): Set[String]
-}
-object IXingYiHeaderToLensNames {
-  implicit object headerToLensNames extends IXingYiHeaderToLensNames {
-    override def apply(xingyiHeader: Option[String]): Set[String] = xingyiHeader match {
-      case None => Set()
-      case Some(header) if !header.contains(DomainDefn.xingyiHeaderPrefix) => Set()
-      case Some(header) =>
-        if (!header.startsWith(DomainDefn.xingyiHeaderPrefix)) throw new RuntimeException(s"Must start with ${DomainDefn.xingyiHeaderPrefix} actually is $header")
-        val withoutPrefix = header.substring(DomainDefn.xingyiHeaderPrefix.length)
-        DomainList.stringToSet(withoutPrefix)
-    }
-  }
-}
+
 case class DomainList[SharedE, DomainE](firstDomain: DomainDetails[SharedE, DomainE], restDomains: DomainDetails[SharedE, DomainE]*) {
   val domains = firstDomain :: restDomains.toList
 
