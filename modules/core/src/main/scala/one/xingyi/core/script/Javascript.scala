@@ -13,18 +13,12 @@ trait Javascript extends CodeFragment {
 
 object Javascript extends Javascript {
   implicit def lensCodeMaker: LensCodeMaker[Javascript] = new JsMaker
-
-
 }
 
 class JsMaker extends LensCodeMaker[Javascript] {
 
-  def header: Header[Javascript] = name => Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("header.js")).mkString
-  def renderer: Renderer[Javascript] = _ => ""
-  def footer: Footer[Javascript] = () => ""
-
+  lazy val header = Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("header.js")).mkString
   def oneLens(name: String) = s"""lens("$name")"""
-
   def manyLens(names: List[String]) = names.map(name => oneLens(name)).mkString("compose(", ",", ");")
 
   def lens(name: String, names: List[String]) = names match {
@@ -38,6 +32,6 @@ class JsMaker extends LensCodeMaker[Javascript] {
       case s: ManualLensDefn[_, _] => s.javascript
     }
   override def apply[SharedE, DomainE](defn: DomainDefn[SharedE, DomainE]): String =
-    (header(defn) :: defn.renderers.map(renderer) ::: defn.lens.map(fromLensDefns) ::: List(footer())).mkString("\n")
+    (header :: defn.lens.map(fromLensDefns)).mkString("\n")
 
 }

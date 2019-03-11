@@ -6,11 +6,11 @@ import one.xingyi.core.serverMediaType.DomainDefn
 import one.xingyi.core.strings.Strings
 
 
-trait Header[L] extends (DomainDefn[_, _] => String)
-
-trait Renderer[L] extends (String => String)
-
-trait Footer[L] extends (() => String)
+//trait Header[L] extends (DomainDefn[_, _] => String)
+//
+//trait Renderer[L] extends (String => String)
+//
+//trait Footer[L] extends (() => String)
 
 
 trait LensCodeMaker[L <: CodeFragment] {
