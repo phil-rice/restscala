@@ -76,7 +76,7 @@ lazy val javascriptServer = (project in file("modules/javascriptserver")).
   dependsOn(core % "test->test;compile->compile").
   settings(publishSettings: _*)
 
-lazy val scalaclient = (project in file("modules/scalaclient")).
+lazy val client = (project in file("modules/client")).
   dependsOn(core % "test->test;compile->compile").
   settings(publishSettings: _*)
 
@@ -86,6 +86,7 @@ lazy val test = (project in file("modules/test")).
   dependsOn(core % "test->test;compile->compile").
   dependsOn(lensdslServer % "test->test;compile->compile").
   dependsOn(javascriptServer % "test->test;compile->compile").
+  dependsOn(client % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
   aggregate(core)
 
@@ -147,7 +148,7 @@ lazy val backend2 = (project in file("demo/backend2")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(backendShared % "test->test;compile->compile").aggregate(backendShared).
   dependsOn(model2 % "test->test;compile->compile").aggregate(model2).
-//  dependsOn(json4s % "test->test;compile->compile").
+  //  dependsOn(json4s % "test->test;compile->compile").
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
@@ -155,12 +156,13 @@ lazy val backend3 = (project in file("demo/backend3")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
   dependsOn(backendShared % "test->test;compile->compile").aggregate(backendShared).
   dependsOn(model3 % "test->test;compile->compile").aggregate(model3).
-//  dependsOn(json4s % "test->test;compile->compile").
+  //  dependsOn(json4s % "test->test;compile->compile").
   settings(publishArtifact := false).
   settings(publishSettings: _*)
 
 lazy val website = (project in file("demo/website")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
+  dependsOn(client % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
   dependsOn(mustache % "test->test;compile->compile").
   dependsOn(simplewebframework % "test->test;compile->compile").
