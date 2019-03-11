@@ -59,11 +59,11 @@ object DomainList {
 case class DomainList[SharedE, DomainE](firstDomain: DomainDetails[SharedE, DomainE], restDomains: DomainDetails[SharedE, DomainE]*) {
   val domains = firstDomain :: restDomains.toList
 
-  def accept(xingyiHeader: Option[String])(implicit xingYiHeaderToLensNames: IXingYiHeaderToLensNames) = xingYiHeaderToLensNames(xingyiHeader) match {
-    case empty if empty.size == 0 => firstDomain
-    case set => domains.find(_.isDefinedAt(set)) match {
-      case Some(foundDomain) => foundDomain
-      case None => throw new CannotRespondToQuery(xingyiHeader, set, DomainDetails.stringsToString(set), domains.map(d => (d.name, d.lensNames, set -- d.lensNames)))
-    }
-  }
+  def accept(xingyiHeader: Option[String])(implicit xingYiHeaderToLensNames: IXingYiHeaderToLensNames) =
+    xingyiHeader.flatMap(xingYiHeaderToLensNames.accept).fold(firstDomain)(details =>
+      domains.find(_.isDefinedAt(details.lensNames)).getOrElse(throw cannotRespondException(xingyiHeader, details)))
+
+  def cannotRespondException(xingyiHeader: Option[String], details: XingYiHeaderDetails) =
+    new CannotRespondToQuery(xingyiHeader, details, DomainDetails.stringsToString(details.lensNames), domains.map(d => (d.name, d.lensNames, details.lensNames -- d.lensNames)))
+
 }

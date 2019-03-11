@@ -6,6 +6,7 @@ import java.io.File
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.codemaker.{DomainCD, DomainDefnToCodeDom, LensCodeMaker, ToScalaCode}
 import one.xingyi.core.script._
+import one.xingyi.core.serverMediaType.Javascript
 import one.xingyi.core.strings.Files
 import one.xingyi.scriptModel1.IPerson
 

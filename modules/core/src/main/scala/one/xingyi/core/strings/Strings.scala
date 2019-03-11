@@ -4,7 +4,12 @@ package one.xingyi.core.strings
 import java.io.{ByteArrayOutputStream, PrintStream, StringWriter}
 
 object Strings {
-  def withoutStringBefore(beforeChar:  Char)(s: String):String = s.dropWhile(_ != beforeChar).drop(1)
+
+  def partition(separator: String)(s: String): Option[(String, String)] = {
+    val index = s.indexOf(separator)
+    if (index == -1) None else Some(s.substring(0, index), s.substring(index + separator.length))
+  }
+  def withoutStringBefore(beforeChar: Char)(s: String): String = s.dropWhile(_ != beforeChar).drop(1)
 
   def toOption(s: String) = if (s == null || s == "") None else Some(s)
 

@@ -3,7 +3,7 @@ package one.xingyi.core.codemaker
 
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.script._
-import one.xingyi.core.serverMediaType.{CodeDetails, DomainDefn, DomainDefnToDetails}
+import one.xingyi.core.serverMediaType.{CodeDetails, DomainDefn, DomainDefnToDetails, Javascript}
 import org.mockito.Mockito._
 class DomainDetailsTest extends UtilsSpec with ScriptFixture {
 

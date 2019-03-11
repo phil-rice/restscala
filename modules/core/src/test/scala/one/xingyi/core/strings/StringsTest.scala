@@ -7,6 +7,14 @@ import one.xingyi.core.strings.Strings.indent
 
 class StringsTest extends UtilsWithLoggingSpec {
 
+  "Strings.partition" should "split a string based on the separator" in {
+    Strings.partition(".")("one.two") shouldBe Some(("one", "two"))
+    Strings.partition(".")("one.two.three") shouldBe Some(("one", "two.three"))
+    Strings.partition(".")("") shouldBe None
+    Strings.partition(".")("nosdots") shouldBe None
+
+  }
+
   "Strings.ellipse" should "return the string if the length is less than the number" in {
     Strings.ellipses(3)("") shouldBe ""
     Strings.ellipses(3)("abc") shouldBe "abc"
@@ -64,7 +72,7 @@ class StringsTest extends UtilsWithLoggingSpec {
   }
 
   "Strings.uri" should "make a uri" in {
-    Strings.uri("/abc","def/","/gh/", "i", "j") shouldBe "abc/def/gh/i/j"
+    Strings.uri("/abc", "def/", "/gh/", "i", "j") shouldBe "abc/def/gh/i/j"
   }
 
 }

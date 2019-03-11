@@ -2,7 +2,6 @@
 package one.xingyi.core.serverMediaType
 import one.xingyi.core.codemaker.{CodeFragment, LensCodeMaker, ScalaCode, ToScalaCode}
 import one.xingyi.core.crypto.Digestor
-import one.xingyi.core.script.Javascript
 
 import scala.collection.Set
 import scala.reflect.ClassTag

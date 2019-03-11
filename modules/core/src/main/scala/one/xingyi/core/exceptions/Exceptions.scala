@@ -3,6 +3,7 @@ package one.xingyi.core.exceptions
 import one.xingyi.core.http.{ServiceRequest, ServiceResponse}
 import one.xingyi.core.logging.{DetailedLogging, RequestDetails}
 import one.xingyi.core.monad.MonadWithException
+import one.xingyi.core.serverMediaType.XingYiHeaderDetails
 
 import scala.collection.Set
 import scala.language.higherKinds
@@ -25,11 +26,12 @@ class EndpointNotFoundException(val serviceRequest: ServiceRequest) extends Exce
 class ResponseParserException[Req](req: Req, info: String, serviceResponse: ServiceResponse)(implicit reqDetails: DetailedLogging[Req], srDetails: DetailedLogging[ServiceResponse])
   extends Exception(s"$info the response was ${srDetails(serviceResponse)} when request was: ${reqDetails(req)}")
 
-class CannotRespondToQuery(header: Option[String], set: Set[String], normalisedHeader: String, failures: List[(String, Set[String], Set[String])]) extends
+class CannotRespondToQuery(header: Option[String], details: XingYiHeaderDetails, normalisedHeader: String, failures: List[(String, Set[String], Set[String])]) extends
   RuntimeException(
     s"""Header[$header]
        | normalised[$normalisedHeader],
-       | headerAsSet: ${set.toList.mkString(",")}
+       | language: ${details.lensDlsName}
+       | headerAsSet: ${details.lensNames}
        | failures:
        | ${
       failures.map { case (name, allowed, failures) =>
