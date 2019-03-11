@@ -14,7 +14,7 @@ class CodeDomTest extends UtilsSpec with ScriptFixtureWithTestLanguage {
   it should "have a smoke test " in {
     domainCdToScala(domainCd1).noWhiteSpace shouldBe
       """package one.xingyi.core.script
-        |import someSharedPackageName._
+        |import one.xingyi.core.script._
         |import one.xingyi.core.json.IXingYiHeaderFor
         |import one.xingyi.core.optics.Lens
         |import one.xingyi.core.script.{Domain,DomainMaker,IXingYi,ServerDomain}

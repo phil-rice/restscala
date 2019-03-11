@@ -40,16 +40,17 @@ abstract class DomainListTest[L <: LensLanguage] extends UtilsSpec with ScriptFi
     when(toLensNames.accept("someAcceptHeader")) thenReturn Some(XingYiHeaderDetails(defaultLensLanguage, Set("some", "rubbish", "names")))
     intercept[CannotRespondToQuery](domainList.accept(Some("someAcceptHeader"), defaultLensLanguage)).getMessage.noWhiteSpace shouldBe
     s"""Header[Some(someAcceptHeader)]
-      | normalised[names,rubbish,some],
-      | language: ${defaultLensLanguage.name}
-      | headerAsSet: Set(some, rubbish, names)
-      | failures:
-      | Domain ParentDomainForTest1
-      |   Allowed: lens_house_postcode_string,lens_parent_house_house,lens_parent_children_childlist,lens_parent_name_string,lens_child_name_string
-      |   Failed: some,rubbish,names
-      |;Domain ParentDomainForTest2
-      |   Allowed: lens_house_postcode_string,lens_parent_house_house,lens_person_postcode_string,lens_parent_children_childlist,lens_parent_name_string,lens_child_name_string
-      |   Failed: some,rubbish,names""".stripMargin.noWhiteSpace
+       | normalised[names,rubbish,some],
+       | language: ${defaultLensLanguage.name}
+       | headerAsSet: Set(some, rubbish, names)
+       | failures:
+       | Domain ParentDomainForTest1
+       |   Allowed: lens_house_postcode_string,lens_parent_house_house,lens_parent_children_childlist,lens_house_houseno_string,lens_parent_name_string,lens_child_name_string
+       |   Failed: some,rubbish,names
+       |;Domain ParentDomainForTest2
+       |   Allowed: lens_house_postcode_string,lens_parent_house_house,lens_person_postcode_string,lens_parent_children_childlist,lens_house_houseno_string,lens_parent_name_string,lens_child_name_string
+       |   Failed: some,rubbish,names
+     """.stripMargin.noWhiteSpace
   }
 
 }

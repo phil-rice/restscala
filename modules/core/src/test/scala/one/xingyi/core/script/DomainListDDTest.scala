@@ -24,14 +24,16 @@ abstract class DomainListDDTest[J,L <: LensLanguage](implicit jsonWriter: JsonWr
         |    }],
         |    "entities":{
         |      "one.xingyi.core.script.IChild":{
-        |
+        |        "lens_child_name_string":"lens_child_name_string"
         |      },
         |      "one.xingyi.core.script.IHouse":{
-        |
+        |        "lens_house_houseno_string":"lens_house_houseno_string",
+        |        "lens_house_postcode_string":"lens_house_postcode_string"
         |      },
         |      "one.xingyi.core.script.IParent":{
-        |        "nameLens":"lens_parent_name_string",
-        |        "houseLens":"lens_parent_house_house"
+        |        "lens_parent_children_childlist":"lens_parent_children_childlist",
+        |        "lens_parent_house_house":"lens_parent_house_house",
+        |        "lens_parent_name_string":"lens_parent_name_string"
         |      }
         |    },
         |    "renderers":["renderer1","renderer2"]
@@ -47,14 +49,16 @@ abstract class DomainListDDTest[J,L <: LensLanguage](implicit jsonWriter: JsonWr
         |    }],
         |    "entities":{
         |      "one.xingyi.core.script.IChild":{
-        |
+        |        "lens_child_name_string":"lens_child_name_string"
         |      },
         |      "one.xingyi.core.script.IHouse":{
-        |
+        |        "lens_house_houseno_string":"lens_house_houseno_string",
+        |        "lens_house_postcode_string":"lens_house_postcode_string"
         |      },
         |      "one.xingyi.core.script.IParent":{
-        |        "nameLens":"lens_parent_name_string",
-        |        "houseLens":"lens_parent_house_house"
+        |        "lens_parent_children_childlist":"lens_parent_children_childlist",
+        |        "lens_parent_house_house":"lens_parent_house_house",
+        |        "lens_parent_name_string":"lens_parent_name_string"
         |      }
         |    },
         |    "renderers":["renderer1","renderer2"]
@@ -75,8 +79,8 @@ abstract class DomainListDDTest[J,L <: LensLanguage](implicit jsonWriter: JsonWr
         |
         |      },
         |      "one.xingyi.core.script.IParent":{
-        |        "nameLens":"lens_parent_name_string",
-        |        "childrenLens":"lens_parent_children_childlist"
+        |        "lens_parent_children_childlist":"lens_parent_children_childlist",
+        |        "lens_parent_name_string":"lens_parent_name_string"
         |      }
         |    },
         |    "renderers":["renderer1","renderer2"]

@@ -133,7 +133,9 @@ class DefaultDomainDefnToCodeDom(implicit interfaceToImplName: InterfaceToImplNa
         interfaceToImplName.opsServerSideImpl(interface),
         findXingYiInterfaceAnnotationClasses(interface.getClass),
         Reflect(interface).zeroParamMethodsNameAndValue[IXingYiLens[_, _]].map { case (name, l) =>
-          LensMethodCD(name, domainDefn.projectionLens(l).name, lensDefnToLensType(domainDefn.projectionLens(l)))
+          val lens = domainDefn.projectionLens.getOrElse(l, throw new RuntimeException(s"Cannot find lens with name $name Legal values are ${domainDefn.projectionLens.keySet.map{x => val y = x; x}}"))
+          val lensType = lensDefnToLensType(lens)
+          LensMethodCD(name, lens.name, lensType)
         })
     }
 

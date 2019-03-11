@@ -21,16 +21,18 @@ class DomainDetailsTest extends UtilsSpec with ScriptFixtureWithTestLanguage {
 
 
     details.name shouldBe "ParentDomainForTest1"
-    details.packageName shouldBe "one.xingyi.core.script"
+    details.packageName shouldBe "one.xingyi.test.client"
     details.code shouldBe Map(defaultLensLanguage -> CodeDetails("lensLanguageForTestCode"))
-    details.accept shouldBe "application/xingyi.lens_child_name_string,lens_house_postcode_string,lens_parent_children_childlist,lens_parent_house_house,lens_parent_name_string"
+    details.accept shouldBe "application/xingyi.lens_child_name_string,lens_house_houseno_string,lens_house_postcode_string,lens_parent_children_childlist,lens_parent_house_house,lens_parent_name_string"
     details.renderers shouldBe List("renderer1", "renderer2")
-    details.lensNames shouldBe Set("lens_house_postcode_string", "lens_parent_house_house", "lens_parent_children_childlist", "lens_parent_name_string", "lens_child_name_string")
+    details.lensNames shouldBe Set("lens_house_postcode_string", "lens_parent_house_house", "lens_parent_children_childlist", "lens_parent_name_string", "lens_child_name_string","lens_house_houseno_string")
   }
 
   it should "have a normalisedLens" in {
     val details = implicitly[DomainDefnToDetails[IParent, ParentForTest]] apply domainForTest
-    details.normalisedLens shouldBe "lens_child_name_string,lens_house_postcode_string,lens_parent_children_childlist,lens_parent_house_house,lens_parent_name_string"
+    details.normalisedLens shouldBe "lens_child_name_string,lens_house_houseno_string,lens_house_postcode_string,lens_parent_children_childlist,lens_parent_house_house,lens_parent_name_string"
+                                   //lens_child_name_string,lens_house_postcode_string,lens_parent_children_childlist,lens_parent_house_house,lens_parent_name_string
+
   }
 
   it should "be defined at if only include supported lens" in {

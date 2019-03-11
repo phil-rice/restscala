@@ -18,7 +18,7 @@ object DomainDD extends JsonWriterLanguage {
   implicit def toJson(implicit methodToJson: ToJsonLib[MethodDD]): ToJsonLib[DomainDD] = { dd =>
     JsonObject("name" -> dd.domainName,
       "methods" -> toListT(dd.methodDDs),
-      "entities" -> JsonObject(dd.entities.toList.sortBy(_.interfaceName).map(edd => (edd.interfaceName, JsonObject(dd.interfaces.getOrElse(edd.interfaceName, Nil).map(x => x.interfaceName -> JsonString(x.lensName)): _*))): _*),
+      "entities" -> JsonObject(dd.entities.toList.sortBy(_.interfaceName).map(edd => (edd.interfaceName, JsonObject(dd.interfaces.getOrElse(edd.interfaceName, Nil).sortBy(_.lensName).map(x => x.lensName -> JsonString(x.lensName)): _*))): _*),
       "renderers" -> JsonList(dd.renderers.map(JsonString(_)))
     )
   }
@@ -63,7 +63,7 @@ class DefaultDomainAndMethodsToDisplayDom(implicit interfaceToImplName: Interfac
     }
     val map = lensDefns.foldLeft(Map[String, List[LensMethodDD]]()) { case (acc, (name, ld)) => acc addToList (ld.classA.runtimeClass.getName -> LensMethodDD(name, ld.name)) }
 
-    DomainDD(domainDefn.domainName, domainAndMethods.methodDatas.map(md => MethodDD(md.method.toString, md.urlPattern)), entityDDs, map, domainDefn.renderers)
+    DomainDD(domainDefn.domainName, domainAndMethods.methodDatas.map(md => MethodDD(md.method.toString, md.urlPattern)).sortBy(_.methodName), entityDDs, map, domainDefn.renderers)
   }
 }
 

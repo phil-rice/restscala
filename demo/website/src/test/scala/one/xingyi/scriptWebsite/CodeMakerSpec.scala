@@ -2,6 +2,7 @@
 package one.xingyi.scriptWebsite
 
 import one.xingyi.core.script._
+import one.xingyi.javascript.client.JavascriptXingYiLoader
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.io.Source
@@ -16,6 +17,7 @@ trait CodeMakerFixture {
 class CodeMakerSpec extends FlatSpec with Matchers with CodeMakerFixture {
 
   behavior of "Java script code maker"
+  implicit val javascriptXingYiLoader = new JavascriptXingYiLoader
 
   val json = Source.fromInputStream(getClass.getResourceAsStream("/sample.json")).mkString
   def setup(fn: IXingYi => Unit): Unit = {
