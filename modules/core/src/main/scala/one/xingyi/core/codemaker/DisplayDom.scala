@@ -4,7 +4,7 @@ package one.xingyi.core.codemaker
 import one.xingyi.core.json._
 import one.xingyi.core.map.Maps._
 import one.xingyi.core.reflection.Reflect
-import one.xingyi.core.script.{DomainAndMethods, InterfaceAndProjection}
+import one.xingyi.core.serverMediaType.{DomainAndMethods, InterfaceAndProjection}
 
 import scala.reflect.ClassTag
 case class LensMethodDD(interfaceName: String, lensName: String)

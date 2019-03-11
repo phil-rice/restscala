@@ -5,6 +5,7 @@ import one.xingyi.core.id.HasId
 import one.xingyi.core.http._
 import one.xingyi.core.json.{JsonParser, JsonWriter, ObjectProjection, ProofOfBinding}
 import one.xingyi.core.monad.IdentityMonad
+import one.xingyi.core.serverMediaType.DomainDefn
 
 import scala.util.Failure
 

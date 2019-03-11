@@ -7,6 +7,7 @@ import one.xingyi.core.logging.DetailedLogging
 import one.xingyi.core.monad.{MonadCanFailWithException, MonadWithState}
 import one.xingyi.core.objectify.RecordedCall
 import one.xingyi.core.optics.Lens
+import one.xingyi.core.serverMediaType.DomainDefn
 
 import scala.language.higherKinds
 import scala.reflect.ClassTag

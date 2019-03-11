@@ -2,7 +2,7 @@
 package one.xingyi.core.codemaker
 
 import one.xingyi.core.json._
-import one.xingyi.core.script.DomainDefn
+import one.xingyi.core.serverMediaType.DomainDefn
 import one.xingyi.core.strings.Strings
 
 

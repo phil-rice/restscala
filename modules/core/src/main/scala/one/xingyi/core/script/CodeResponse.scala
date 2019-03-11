@@ -6,6 +6,7 @@ import one.xingyi.core.http._
 import one.xingyi.core.json._
 import one.xingyi.core.language.Language._
 import one.xingyi.core.monad.Monad
+import one.xingyi.core.serverMediaType.{DomainDefn, DomainDetails, DomainList}
 import one.xingyi.core.strings.Strings
 
 import scala.language.higherKinds

@@ -3,7 +3,8 @@ package one.xingyi.core.codemaker
 
 import one.xingyi.core.json.{IXingYiLens, IXingYiSharedOps, LensDefn}
 import one.xingyi.core.reflection.Reflect
-import one.xingyi.core.script.{DomainDefn, InterfaceAndProjection, XingYiInterface}
+import one.xingyi.core.script.XingYiInterface
+import one.xingyi.core.serverMediaType.{DomainDefn, InterfaceAndProjection}
 import one.xingyi.core.strings.Strings
 
 import scala.language.higherKinds

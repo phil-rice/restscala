@@ -5,6 +5,7 @@ import one.xingyi.core.http.FromServiceRequest
 import one.xingyi.core.json._
 import one.xingyi.core.language.AnyLanguage._
 import one.xingyi.core.monad.{Monad, MonadCanFailWithException}
+import one.xingyi.core.serverMediaType.DomainList
 
 import scala.language.higherKinds
 

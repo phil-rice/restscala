@@ -68,10 +68,20 @@ lazy val scalatestSettings = publishSettings ++ Seq(
 lazy val core = (project in file("modules/core")).
   settings(publishSettings: _*)
 
+lazy val dsllens = (project in file("modules/dsllens")).
+  dependsOn(core % "test->test;compile->compile").
+  settings(publishSettings: _*)
+
+lazy val javascriptlens = (project in file("modules/javascriptlens")).
+  dependsOn(core % "test->test;compile->compile").
+  settings(publishSettings: _*)
+
 
 lazy val test = (project in file("modules/test")).
   settings(publishSettings: _*).
   dependsOn(core % "test->test;compile->compile").
+  dependsOn(dsllens % "test->test;compile->compile").
+  dependsOn(javascriptlens % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
   aggregate(core)
 
@@ -115,7 +125,8 @@ lazy val model3 = (project in file("demo/model3")).
 
 lazy val backendShared = (project in file("demo/backendShared")).
   dependsOn(core % "test->test;compile->compile").aggregate(core).
-//  dependsOn(model1 % "test->test;compile->compile").aggregate(model1).
+  dependsOn(dsllens % "test->test;compile->compile").
+  dependsOn(javascriptlens % "test->test;compile->compile").
   dependsOn(json4s % "test->test;compile->compile").
   dependsOn(simplewebframework % "test->test;compile->compile").
   settings(publishArtifact := false).

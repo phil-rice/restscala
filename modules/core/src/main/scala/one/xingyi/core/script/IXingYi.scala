@@ -2,11 +2,11 @@
 package one.xingyi.core.script
 
 import javax.script.{Invocable, ScriptEngine}
-import jdk.nashorn.api.scripting.{ScriptObjectMirror, ScriptUtils}
-import one.xingyi.core.id.HasId
 import one.xingyi.core.http._
+import one.xingyi.core.id.HasId
 import one.xingyi.core.json._
 import one.xingyi.core.optics.Lens
+import one.xingyi.core.serverMediaType.DomainDetails
 
 import scala.language.postfixOps
 
@@ -115,8 +115,9 @@ class DefaultXingYi(engine: ScriptEngine) extends IXingYi {
   def parse[T <: Domain](s: String)(implicit domainMaker: DomainMaker[T]) = wrap("parse", domainMaker.create(inv.invokeFunction("parse", s)))
 
 
-  import jdk.nashorn.api.scripting.ScriptObjectMirror
   import java.util
+
+  import jdk.nashorn.api.scripting.ScriptObjectMirror
 
   def toList(original: Any): List[Object] = {
     if (!original.isInstanceOf[ScriptObjectMirror]) throw new IllegalStateException("This is supposed to be an object mirror and it isn't" + original.getClass + " / " + original)

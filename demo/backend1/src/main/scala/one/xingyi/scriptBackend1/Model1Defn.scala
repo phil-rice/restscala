@@ -5,6 +5,7 @@ import one.xingyi.core.id.{CopyWithNewId, HasId}
 import one.xingyi.core.json.{IXingYiLens, StringFieldProjection, _}
 import one.xingyi.core.optics.Lens
 import one.xingyi.core.script._
+import one.xingyi.core.serverMediaType.DomainDefn
 import one.xingyi.scriptModel1._
 
 import scala.language.{higherKinds, implicitConversions}

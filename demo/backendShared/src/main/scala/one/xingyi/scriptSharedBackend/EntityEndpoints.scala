@@ -11,6 +11,7 @@ import one.xingyi.core.language.MicroserviceComposers
 import one.xingyi.core.logging._
 import one.xingyi.core.monad._
 import one.xingyi.core.script._
+import one.xingyi.core.serverMediaType.DomainList
 
 import scala.language.higherKinds
 
