@@ -6,7 +6,8 @@ import one.xingyi.core.json.{LensDefn, ManualLensDefn, SimpleLensDefn}
 
 import scala.io.Source
 
-trait Javascript extends CodeFragment {
+trait Javascript extends LensLanguage {
+  override def name: String = "javascript"
   override def mediaType: MediaType = MediaType("application/javascript")
 }
 
@@ -27,6 +28,6 @@ class JsMaker extends LensCodeMaker[Javascript] {
       case s: SimpleLensDefn[_, _] => lens(s.name, s.names)
       case s: ManualLensDefn[_, _] => s.javascript
     }
-  override def apply[SharedE, DomainE](defn: DomainDefn[SharedE, DomainE]): String = (header :: defn.lens.map(fromLensDefns)).mkString("\n")
+  override def apply[SharedE, DomainE](defn: DomainDefn[SharedE, DomainE]): String = (header :: defn.lens.sortBy(_.name).map(fromLensDefns)).mkString("\n")
 
 }

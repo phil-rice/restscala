@@ -11,10 +11,10 @@ import scala.language.higherKinds
 import scala.reflect.ClassTag
 
 object ScalaCode extends ScalaCode {
-  override def mediaType: MediaType = MediaType("application/scala")
+  def mediaType: MediaType = MediaType("application/scala")
 }
 
-trait ScalaCode extends CodeFragment
+trait ScalaCode
 
 trait ToScalaCode[T] extends (T => String)
 trait InterfaceToImplName {
@@ -62,10 +62,10 @@ object InterfaceCD {
     (s"""object $opClassName {
         |   implicit def hasHeader: IXingYiHeaderFor[$opClassName] =  () => List(${lensMethods.map(l => "\"" + l.lensName + "\"").mkString(",")})
         |}""" ::
-      s"""class $opClassName(implicit val xingYi: IXingYi) extends $opInterfaceName[Lens, ${typesThatWeLensTo.mkString(",")}] {""" ::
-      lensMethods.map(methodToScala) :::
-      "}" ::
-      List[String]()).map(_.stripMargin).mkString("\n")
+     s"""class $opClassName(implicit val xingYi: IXingYi) extends $opInterfaceName[Lens, ${typesThatWeLensTo.mkString(",")}] {""" ::
+     lensMethods.map(methodToScala) :::
+     "}" ::
+     List[String]()).map(_.stripMargin).mkString("\n")
   }
 }
 case class EntityCD(className: String, interfaceName: String)
@@ -87,11 +87,11 @@ object DomainCD {
     import domCd._
     val lensNames = domCd.interfaces.flatMap(_.lensMethods.map(l => "\"" + l.lensName + "\"")).mkString(",")
     (s"package $packageName" ::
-      imports.map(i => s"import $i").mkString("\n") ::
-      s"""object $domainName extends ServerDomain{
-         |  def lens=List($lensNames)
-         |}""".stripMargin ::
-      domCd.entities.map(entityToScala) ::: domCd.interfaces.map(interfaceToScala)).mkString("\n\n")
+     imports.map(i => s"import $i").mkString("\n") ::
+     s"""object $domainName extends ServerDomain{
+        |  def lens=List($lensNames)
+        |}""".stripMargin ::
+     domCd.entities.map(entityToScala) ::: domCd.interfaces.map(interfaceToScala)).mkString("\n\n")
   }
 }
 

@@ -5,7 +5,7 @@ import one.xingyi.core.http.Failer.failerForThrowable
 import one.xingyi.core.logging._
 import one.xingyi.core.monad.IdentityMonad
 import one.xingyi.core.script.IEntityStore
-import one.xingyi.core.serverMediaType.{DomainDefnToDetails, DomainList}
+import one.xingyi.core.serverMediaType.{DomainDefnToDetails, DomainList, Javascript, LensLanguages}
 import one.xingyi.json4s.Json4sParser._
 import one.xingyi.json4s.Json4sWriter._
 import one.xingyi.scriptModel3.IPerson
@@ -19,6 +19,8 @@ object Backend3 extends App {
   implicit val logger: LoggingAdapter = PrintlnLoggingAdapter
 
   import SimpleLogRequestAndResult._
+
+  implicit val lensLanguages = LensLanguages(List(Javascript: Javascript))
 
   implicit val personDomainList = DomainList(DomainDefnToDetails(new Model3PersonDefn))
   implicit val personStore = IEntityStore.demo[IdentityMonad, Throwable, IPerson, Person]

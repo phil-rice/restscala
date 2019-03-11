@@ -3,7 +3,7 @@ package one.xingyi.core.codemaker
 
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.script._
-import one.xingyi.core.serverMediaType.{CodeDetails, DomainDefn, DomainDefnToDetails, Javascript}
+import one.xingyi.core.serverMediaType._
 import org.mockito.Mockito._
 class DomainDetailsTest extends UtilsSpec with ScriptFixture {
 
@@ -12,16 +12,19 @@ class DomainDetailsTest extends UtilsSpec with ScriptFixture {
   behavior of "DomainDetails"
 
   it should "be created from a domain defn" in {
-    implicit val javascript = mock[LensCodeMaker[Javascript]]
+    implicit val javascript: LensCodeMaker[Javascript] = mock[LensCodeMaker[Javascript]]
     when(javascript.apply(domainForTest)) thenReturn "some Javascript code"
     implicit val scala = mock[ToScalaCode[DomainDefn[IParent, ParentForTest]]]
     when(scala.apply(domainForTest)) thenReturn "some Scala code"
+
+    implicit val lensLanguages = new LensLanguages(List(Javascript: Javascript))
+
     val details = implicitly[DomainDefnToDetails[IParent, ParentForTest]] apply domainForTest
 
 
     details.name shouldBe "ParentDomainForTest1"
     details.packageName shouldBe "one.xingyi.core.script"
-    details.code shouldBe Map(Javascript -> CodeDetails("some Javascript code"), ScalaCode -> CodeDetails("some Scala code"))
+    details.code shouldBe Map(Javascript -> CodeDetails("some Javascript code"))
     details.accept shouldBe "application/xingyi.lens_child_name_string,lens_house_postcode_string,lens_parent_children_childlist,lens_parent_house_house,lens_parent_name_string"
     details.renderers shouldBe List("renderer1", "renderer2")
     details.lensNames shouldBe Set("lens_house_postcode_string", "lens_parent_house_house", "lens_parent_children_childlist", "lens_parent_name_string", "lens_child_name_string")

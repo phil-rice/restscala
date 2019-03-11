@@ -24,9 +24,7 @@ object CodeResponse extends JsonWriterLanguage {
     codeRequest =>
       code: CodeResponse[SharedE, DomainE] =>
         val summary: JsonValue = JsonList(code.domainList.domains.map { details: DomainDetails[SharedE, DomainE] =>
-          JsonObject(
-            "name" -> details.name,
-            "code" -> JsonObject(details.code.toList.map { d => d._1.toString -> JsonString(d._2.hash) }: _*))
+          JsonObject("name" -> details.name, "code" -> details.asJson)
         })
         ServiceResponse(Status(200), Body(jsonWriter(summary)), ContentType(DomainDefn.xingyiCodeSummaryMediaType))
   }

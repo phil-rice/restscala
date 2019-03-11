@@ -9,7 +9,7 @@ import one.xingyi.core.language.AnyLanguage._
 import one.xingyi.core.language.MicroserviceComposers
 import one.xingyi.core.monad.{LiftFunctionKleisli, MonadCanFailWithException}
 import one.xingyi.core.script._
-import one.xingyi.core.serverMediaType.DomainList
+import one.xingyi.core.serverMediaType.{DomainList, Javascript, LensLanguages}
 
 import scala.language.higherKinds
 
@@ -41,6 +41,7 @@ class EntityMaker[M[_], Fail, SharedE, DomainE: Links](methods: List[Method])
                                                        failer: SimpleFailer[Fail],
                                                        editEntityFailer: EditEntityRequestFailer[Fail],
                                                        domainList: DomainList[SharedE, DomainE],
+                                                       lensLanguages: LensLanguages,
                                                        entityPrefixFinder: EntityPrefix[DomainE],
                                                        hasId: HasId[DomainE, String],
                                                        proof: ProofOfBinding[SharedE, DomainE]) extends LiftFunctionKleisli[M] with MicroserviceComposers[M] with EndpointKleisli[M] {
@@ -54,7 +55,7 @@ class EntityMaker[M[_], Fail, SharedE, DomainE: Links](methods: List[Method])
     details |+| endpoint[EntityServiceFinderRequest, EntityServiceFinderResponse](s"/$entityPrefix", MatchesServiceRequest.fixedPath(Method("get")))
 
   def makeServerPayload[Req](xingYiHeader: Option[String], dom: DomainE) =
-    ServerPayload(Status(200), dom, domainList.accept(xingYiHeader))
+    ServerPayload(Status(200), dom, domainList.accept(xingYiHeader, Javascript))
 
   def getFn(fn: String => M[DomainE]) = { req: GetEntityRequest => fn(req.id).map(dom => makeServerPayload(req.xingYiHeader, dom)) }
   def getEndpoint[J: JsonWriter](fn: String => M[DomainE])(implicit project: ObjectProjection[SharedE, DomainE]): ServiceRequest => M[Option[ServiceResponse]] =

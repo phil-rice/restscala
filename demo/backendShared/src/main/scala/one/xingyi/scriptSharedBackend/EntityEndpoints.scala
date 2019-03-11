@@ -11,7 +11,7 @@ import one.xingyi.core.language.MicroserviceComposers
 import one.xingyi.core.logging._
 import one.xingyi.core.monad._
 import one.xingyi.core.script._
-import one.xingyi.core.serverMediaType.DomainList
+import one.xingyi.core.serverMediaType.{DomainList, LensLanguages}
 
 import scala.language.higherKinds
 
@@ -23,6 +23,7 @@ class EntityEndpoints[M[_] : Async, Fail, J: JsonParser : JsonWriter, SharedE, D
  entityStore: IEntityStore[M, DomainE],
  hasId: HasId[DomainE, String], copyWithId: CopyWithNewId[DomainE, String], loggingAdapter: LoggingAdapter,
  domainList: DomainList[SharedE, DomainE],
+lensLanguages: LensLanguages,
  projection: ObjectProjection[SharedE, DomainE]) extends LiftFunctionKleisli[M] with ChainKleisli[M, Fail] with EndpointKleisli[M] with MicroserviceComposers[M] {
 
   import projection.proof

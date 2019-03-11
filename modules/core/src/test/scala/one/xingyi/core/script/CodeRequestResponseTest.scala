@@ -22,13 +22,7 @@ abstract class CodeRequestResponseTest[J: JsonWriter] extends UtilsSpec with Scr
     response.status shouldBe Status(200)
     response.headers shouldBe List(ContentType("application/json"))
     response.body.s.noWhiteSpace shouldBe
-      s"""[
-         |{"name":"ParentDomainForTest1",
-         |"code":{"Javascript":"$js0Hash",
-         |"ScalaCode":"$scala0Hash"}},
-         |{"name":"ParentDomainForTest2",
-         |"code":{"Javascript":"$js1Hash",
-         |"ScalaCode":"$scala1Hash"}}]""".stripMargin.noWhiteSpace
+    s"""[{"name":"ParentDomainForTest1","code":{"Javascript":"2gX9qynNFOcahh7bmqApJP787bIMJebrvuWn1Ddz-Jg=","LensLanguageForTest":"U3Gc7tk1W0abCV50AxAiJvuu4TBZZ56Wi5WPFND-2Lg="}},{"name":"ParentDomainForTest2","code":{"Javascript":"to3fmQzyuC-5ryhueR2T0RB3NI3VImLvDSMoS5SkAyA=","LensLanguageForTest":"U3Gc7tk1W0abCV50AxAiJvuu4TBZZ56Wi5WPFND-2Lg="}}]""".stripMargin.noWhiteSpace
   }
 
 }

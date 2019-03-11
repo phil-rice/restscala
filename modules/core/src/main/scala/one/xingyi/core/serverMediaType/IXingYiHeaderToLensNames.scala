@@ -5,23 +5,24 @@ import one.xingyi.core.strings.Strings._
 
 import scala.collection.Set
 
-case class XingYiHeaderDetails(lensDlsName: String, lensNames: Set[String])
+case class XingYiHeaderDetails(lensDlsName: LensLanguage, lensNames: Set[String])
 
 
-trait IXingYiHeaderToLensNames  extends {
+trait IXingYiHeaderToLensNames extends {
   def accept(xingyiHeader: String): Option[XingYiHeaderDetails]
 }
 object IXingYiHeaderToLensNames {
-  implicit def headerToLensNames: IXingYiHeaderToLensNames = new DefaultXingYiHeaderToLensNames
+  implicit def headerToLensNames(implicit lensLanguages: LensLanguages): IXingYiHeaderToLensNames = new DefaultXingYiHeaderToLensNames
 }
 
-class DefaultXingYiHeaderToLensNames extends IXingYiHeaderToLensNames {
+class DefaultXingYiHeaderToLensNames(implicit lensLanguages: LensLanguages) extends IXingYiHeaderToLensNames {
   override def accept(header: String): Option[XingYiHeaderDetails] =
     if (header.contains(DomainDefn.xingyiHeaderPrefix)) {
       if (!header.startsWith(DomainDefn.xingyiHeaderPrefix)) throw new RuntimeException(s"Must start with ${DomainDefn.xingyiHeaderPrefix} actually is $header")
       val withoutPrefix = header.substring(DomainDefn.xingyiHeaderPrefix.length)
       val (languageName, lens) = partition(".")(withoutPrefix).fold(throw new RuntimeException(s"There must be a language name after the '.'. The header was $header"))(x => x)
-      Some(XingYiHeaderDetails(languageName, DomainList.stringToSet(lens)))
+      val lensLanguage = lensLanguages.find(languageName).getOrElse(throw new RuntimeException(s"Language: $language not known. Legal values ${lensLanguages.legalValues}. Header is $header")).lensL
+      Some(XingYiHeaderDetails(lensLanguage, DomainList.stringToSet(lens)))
     }
     else
       None

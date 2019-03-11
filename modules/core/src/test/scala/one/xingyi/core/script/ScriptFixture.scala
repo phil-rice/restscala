@@ -94,7 +94,19 @@ class ParentDomainForTest2 extends DomainDefn[IParent, ParentForTest](
   ))
 
 
+case class LensLanguageForTest() extends LensLanguage {
+  override def name: String = "testlenslang"
+  override def mediaType: MediaType = MediaType("test")
+}
+
+object LensLanguageForTest {
+  implicit object lensMakerForLensLanguageForTest extends LensCodeMaker[LensLanguageForTest] {
+    override def apply[SharedE, DomainE](domainDefn: DomainDefn[SharedE, DomainE]): String = "lensLanguageForTestCode"
+  }
+}
+
 trait ScriptFixture {
+  implicit val lensLanguages = new LensLanguages(List(Javascript: Javascript, LensLanguageForTest()))
   val dom1 = new ParentDomainForTest1
   val dom2 = new ParentDomainForTest2
 
@@ -112,11 +124,10 @@ trait ScriptFixture {
   val details2 = DomainDefnToDetails(dom2)
   val domainList = DomainList[IParent, ParentForTest](details1, details2)
   val code0 = domainList.domains(0).code
-  val js0Hash = code0(Javascript).hash
-  val scala0Hash = code0(ScalaCode).hash
   val code1 = domainList.domains(1).code
+
+  val js0Hash = code0(Javascript).hash
   val js1Hash = code1(Javascript).hash
-  val scala1Hash = code1(ScalaCode).hash
 
 
   val sharedPackageName = new ParentDomainForTest1().sharedPackageName

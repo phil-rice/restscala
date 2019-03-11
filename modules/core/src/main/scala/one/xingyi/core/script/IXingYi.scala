@@ -6,7 +6,7 @@ import one.xingyi.core.http._
 import one.xingyi.core.id.HasId
 import one.xingyi.core.json._
 import one.xingyi.core.optics.Lens
-import one.xingyi.core.serverMediaType.DomainDetails
+import one.xingyi.core.serverMediaType.{DomainDetails, LensLanguage}
 
 import scala.language.postfixOps
 
@@ -50,7 +50,7 @@ case class LinkDetail(verb: String, urlPattern: String)
 
 trait Links[T] extends (T => List[LinkDetail])
 
-case class ServerPayload[SharedE, DomainE](status: Status, domainObject: DomainE, domain: DomainDetails[SharedE, DomainE])(implicit val links: Links[DomainE])
+case class ServerPayload[SharedE, DomainE](status: Status, domainObject: DomainE, domain: DomainDetails[SharedE, DomainE], lensLanguage: LensLanguage)(implicit val links: Links[DomainE])
 
 trait ToContentType[Req] {
   def apply(req: Req): String
@@ -61,18 +61,21 @@ trait HasHost[T] {
 }
 
 object ServerPayload extends JsonWriterLanguage {
+  def apply[SharedE, DomainE](status: Status, domainObject: DomainE, langAndDetails: (LensLanguage, DomainDetails[SharedE, DomainE]))(implicit links: Links[DomainE]): ServerPayload[SharedE, DomainE] =
+    ServerPayload(status, domainObject, langAndDetails._2, langAndDetails._1)
+
   implicit def toServerResponse[J, Req, SharedE, DomainE]
-  (implicit jsonWriter: JsonWriter[J], entityPrefix: EntityPrefix[DomainE],
-   hasId: HasId[Req, String], hasHost: HasHost[Req],
-   projection: Projection[SharedE, DomainE], toContentType: ToContentType[Req]): ToServiceResponse[Req, ServerPayload[SharedE, DomainE]] = { req =>
+    (implicit jsonWriter: JsonWriter[J], entityPrefix: EntityPrefix[DomainE],
+     hasId: HasId[Req, String], hasHost: HasHost[Req],
+     projection: Projection[SharedE, DomainE], toContentType: ToContentType[Req]): ToServiceResponse[Req, ServerPayload[SharedE, DomainE]] = { req =>
     payload =>
       val host = hasHost(req)
       ServiceResponse(payload.status, Body(
-        s"http://$host/${entityPrefix()}/code/" + payload.domain.codeHeader + "\n" +
-          jsonWriter(projection.toJson(payload.domainObject) |+| ("_links" ->
-            JsonObject(payload.links(payload.domainObject).map {
-              case LinkDetail(verb, pattern) => verb -> JsonString(pattern.replace("<id>", hasId(req)).replace("<host>", host))
-            }: _*)))),
+        s"http://$host/${entityPrefix()}/code/" + payload.domain.code(payload.lensLanguage).hash + "\n" +
+        jsonWriter(projection.toJson(payload.domainObject) |+| ("_links" ->
+                                                                JsonObject(payload.links(payload.domainObject).map {
+                                                                  case LinkDetail(verb, pattern) => verb -> JsonString(pattern.replace("<id>", hasId(req)).replace("<host>", host))
+                                                                }: _*)))),
         List(Header("content-type", toContentType(req)), Header("xingyi", payload.domain.name)))
   }
 }
