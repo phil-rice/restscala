@@ -1,6 +1,7 @@
 package one.xingyi.lensdsl.server
 
 
+
 trait LensDefn
 case class StringLensDefn(name: String) extends LensDefn
 case class IntegerLensDefn(name: String) extends LensDefn
@@ -17,7 +18,7 @@ trait LensValueParser {
 }
 
 object LensValueParser {
-  def simple: LensValueParser = new SimpleLensParser()
+  implicit val simple: LensValueParser = new SimpleLensParser()
 }
 class SimpleLensParser extends LensValueParser {
   val basic: Map[String, (String => LensDefn)] = Map(

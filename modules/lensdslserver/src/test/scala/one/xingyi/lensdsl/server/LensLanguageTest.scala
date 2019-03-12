@@ -5,9 +5,8 @@ import java.util
 import one.xingyi.core.UtilsSpec
 
 class LensLanguageTest extends UtilsSpec {
-  val lensParser = LensValueParser.simple
-  //  val lineParser = LensLineParser.simple
-  //  val storeParser = LensStoreParser.simple
+   val lensParser = implicitly[LensValueParser]
+      val lineParser = implicitly[LensLineParser]
 
   behavior of "LensvalueParser"
 
@@ -36,7 +35,18 @@ class LensLanguageTest extends UtilsSpec {
     lensParser.apply("child/childClass,a/**boolean") shouldBe List(ViewLensDefn("child", "childClass"), SimpleListLensDefn("a", "boolean"))
 
     lensParser.apply("child/childClass,{firstItem},a/*address") shouldBe List(ViewLensDefn("child", "childClass"), FirstItemInListDefn(), ListLensDefn("a", "address"))
-
-
   }
+
+  behavior of "LensLineParser"
+
+  it should "parser lines" in {
+    lineParser.apply("lens1=child/childClass,line1/string") shouldBe
+      LensLine("lens1", List(ViewLensDefn("child", "childClass"), StringLensDefn("line1")))
+  }
+
+  //  @Test public void testLensStoreParser () {
+  //    List < String > lines = List.of("line1=child/childClass,line1/double", "line1=child/childClass,line1/string", "line3=child1/childClass,line1/integer");
+  //    assertEquals(Lists.map(lines, s -> lineParser.apply(s)), storeParser.apply(Lists.join(lines, "\n")).defns);
+  //  }
+
 }
