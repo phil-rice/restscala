@@ -4,8 +4,8 @@ import one.xingyi.core.json.{JsonParser, JsonWriter}
 import one.xingyi.core.script.{ClientPreferedLanguage, ScriptFixture}
 import one.xingyi.core.serverMediaType.LensLanguage
 import one.xingyi.javascript.server.Javascript
-import one.xingyi.lensdsl.server.LensDsl
-import one.xongyi.javascript.server.{JavascriptScriptFixture, LensDslScriptFixture}
+import one.xingyi.lensdsl.server.{LensDsl, LensDslScriptFixture}
+import one.xongyi.javascript.server.JavascriptScriptFixture
 import org.json4s.JValue
 
 abstract class LensLanguageClientAndServerTest[J: JsonParser : JsonWriter, SL <: LensLanguage](preferedLanguage: ClientPreferedLanguage) extends ScriptFixture[SL] with UtilsSpec {

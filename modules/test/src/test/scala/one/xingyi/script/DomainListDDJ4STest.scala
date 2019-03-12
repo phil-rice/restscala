@@ -4,8 +4,8 @@ package one.xingyi.script
 import one.xingyi.core.script.{DomainListDDTest, DomainListTest}
 import one.xingyi.javascript.server.Javascript
 import one.xingyi.json4s.Json4sWriter._
-import one.xingyi.lensdsl.server.LensDsl
-import one.xongyi.javascript.server.{JavascriptScriptFixture, LensDslScriptFixture}
+import one.xingyi.lensdsl.server.{LensDsl, LensDslScriptFixture}
+import one.xongyi.javascript.server.JavascriptScriptFixture
 import org.json4s.JValue
 
 class DomainListDDJ4SJAvascriptTest extends DomainListDDTest[JValue, Javascript] with JavascriptScriptFixture {

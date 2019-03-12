@@ -1,7 +1,6 @@
-package one.xongyi.javascript.server
+package one.xingyi.lensdsl.server
 
 import one.xingyi.core.codemaker.LensCodeMaker
-import one.xingyi.lensdsl.server.LensDsl
 
 trait LensDslScriptFixture {
    def defaultLensLanguage: LensDsl = LensDsl
