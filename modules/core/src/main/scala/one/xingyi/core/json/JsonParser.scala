@@ -5,6 +5,7 @@ import one.xingyi.core.parser.Parser
 
 import scala.language.implicitConversions
 import one.xingyi.core.language.AnyLanguage._
+import one.xingyi.core.simpleList.ISimpleList
 
 trait FromJson[T] extends Parser[T]
 
@@ -19,6 +20,7 @@ trait JsonParser[J] extends (String => J) {
   def extractOptString(j: J): Option[String]
   def asList(j: J): List[J]
   def \(j: J, s: String): J
+  def asListOf[T](j: J, mirrorFn: J => T): List[T]
 }
 
 trait FromJsonLib[J, T] extends (J => T)

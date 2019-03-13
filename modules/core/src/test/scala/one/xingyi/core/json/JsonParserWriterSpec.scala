@@ -60,13 +60,18 @@ abstract class JsonParserWriterSpec[J: ClassTag](implicit val jsonParser: JsonPa
     jsonWriter.toStringForJ(j).noWhiteSpace shouldBe """[{"a":1,"b":1.0,"c":"1","d":true}]"""
   }
 
-
-
-
   it should "turn a J into a string" in {
     jsonWriter.toStringForJ(jsonParser("""{"a":1}""")).noWhiteSpace shouldBe """{"a":1}"""
   }
 
+  class IntWrapper(mirror: J) {
+    def int: Int = jsonParser.extractInt(mirror)
+  }
+  it should "be able to turn a Json list into a ISimpleList" in {
+    val j: J = jsonParser("""[1,2,3,4,5,6]""")
+    val list = jsonParser.asListOf[IntWrapper](j, mirror => new IntWrapper(mirror))
+    list.map(_.int) shouldBe Seq(1, 2, 3, 4, 5, 6)
+  }
 
   behavior of "JsonObject"
 
@@ -111,7 +116,7 @@ abstract class JsonParserWriterSpec[J: ClassTag](implicit val jsonParser: JsonPa
   }
   it should "Allow things with ToJsonLibs to be implicitly converted to json" in {
     val j: JsonValue = toT(thingy)
-    j shouldBe JsonObject("a"->1, "b"->"two", "children"-> toListT(Seq(child1, child2)))
+    j shouldBe JsonObject("a" -> 1, "b" -> "two", "children" -> toListT(Seq(child1, child2)))
   }
 
 

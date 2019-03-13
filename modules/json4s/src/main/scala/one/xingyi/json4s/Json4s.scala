@@ -9,11 +9,11 @@ import org.json4s.{DefaultFormats, JValue}
 import scala.language.implicitConversions
 import one.xingyi.core.language.FunctionLanguage._
 import one.xingyi.core.language.AnyLanguage._
+import one.xingyi.core.simpleList.{ISimpleList, SimpleList}
 
 case class FromJson4sException(msg: String, cause: Throwable) extends Exception(msg, cause)
 
 trait Json4sParser {
-
   implicit object JsonParserForJson4s extends JsonParser[JValue] {
     protected implicit val formats = DefaultFormats
     override def extractInt(j: JValue): Int = j.extract[Int]
@@ -24,8 +24,8 @@ trait Json4sParser {
     override def asList(j: JValue): List[JValue] = j.extract[List[JValue]]
     override def \(j: JValue, s: String): JValue = j \ s
     override def apply(s: String): JValue = JsonMethods.parse(s).ifError(e => throw new FromJson4sException(s"String is [$s]", e))
+    override def asListOf[T](j: JValue, mirrorFn: JValue => T): List[T] = asList(j).map(mirrorFn)
   }
-
 }
 
 object Json4sParser extends Json4sParser

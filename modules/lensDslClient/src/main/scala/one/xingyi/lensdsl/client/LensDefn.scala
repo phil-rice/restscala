@@ -1,6 +1,4 @@
-package one.xingyi.lensdsl.server
-
-
+package one.xingyi.lensdsl.client
 
 trait LensDefn
 case class StringLensDefn(name: String) extends LensDefn

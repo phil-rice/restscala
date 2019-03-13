@@ -1,4 +1,4 @@
-package one.xingyi.lensdsl.server
+package one.xingyi.lensdsl.client
 
 import one.xingyi.core.codemaker.LensCodeMaker
 

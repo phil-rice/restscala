@@ -4,7 +4,7 @@ package one.xingyi.script
 import one.xingyi.core.script.{DomainListDDTest, DomainListTest}
 import one.xingyi.javascript.server.Javascript
 import one.xingyi.json4s.Json4sWriter._
-import one.xingyi.lensdsl.server.{LensDsl, LensDslScriptFixture}
+import one.xingyi.lensdsl.client.{LensDsl, LensDslScriptFixture}
 import one.xongyi.javascript.server.JavascriptScriptFixture
 import org.json4s.JValue
 
