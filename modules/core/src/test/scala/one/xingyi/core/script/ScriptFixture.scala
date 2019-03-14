@@ -104,7 +104,7 @@ object ParentForTest {
   )
 }
 class ParentDomainForTest1 extends DomainDefn[IParent, ParentForTest](
-  classOf[ParentForTest].getPackageName,
+  classOf[ParentForTest].getPackageName(),
   List("renderer1", "renderer2"),
   List(ParentForTest.parentNameOps -> ParentForTest.parentProjection,
     ParentForTest.parentHouseOps -> ParentForTest.parentProjection,
@@ -118,7 +118,7 @@ class ParentDomainForTest1 extends DomainDefn[IParent, ParentForTest](
 }
 
 class ParentDomainForTest2 extends DomainDefn[IParent, ParentForTest](
-  "someSharedPackageName",
+  classOf[ParentForTest].getPackageName,
   List("renderer1", "renderer2"),
   List(ParentForTest.parentNameOps -> ParentForTest.parentProjection,
     //    ParentForTest.parentHouseOps -> ParentForTest.parentProjection,
@@ -179,7 +179,7 @@ trait ScriptFixture[L <: LensLanguage] {
 
 
   val sharedPackageName = new ParentDomainForTest1().sharedPackageName
-  val domainCd1 = DomainCD("one.xingyi.core.script", sharedPackageName, "ParentDomainForTest1", DomainDefnToCodeDom.imports(sharedPackageName),
+  val domainCd1 = DomainCD("one.xingyi.test.client", sharedPackageName, "ParentDomainForTest1", DomainDefnToCodeDom.imports(sharedPackageName),
     List(EntityCD("House", "one.xingyi.core.script.IHouse"),
       EntityCD("Child", "one.xingyi.core.script.IChild"),
       EntityCD("Parent", "one.xingyi.core.script.IParent")),

@@ -1,0 +1,9 @@
+mvn versions:set -DnewVersion=1.0-SNAPSHOT
+It will adjust all pom versions, parent versions and dependency versions in a multi-module project.
+
+If you made a mistake, do
+
+mvn versions:revert
+afterwards, or
+
+mvn versions:commit

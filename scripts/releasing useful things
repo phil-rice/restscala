@@ -1,0 +1,3 @@
+mvn -DskipTests=true -Prelease release:prepare -Dresume=false
+mvn -Prelease release:perform -Dmaven.javadoc.skip=true
+

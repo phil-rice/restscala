@@ -6,8 +6,8 @@ import one.xingyi.core.script._
 import one.xingyi.core.serverMediaType.{CodeDetails, DomainDetails, LensLanguage}
 import one.xingyi.javascript.client.JavascriptXingYiLoader
 import one.xingyi.javascript.server.Javascript
-
-import one.xongyi.javascript.server.{JavascriptScriptFixture, LensDslScriptFixture}
+import one.xingyi.test.client._
+import one.xongyi.javascript.server.JavascriptScriptFixture
 import org.json4s.JValue
 
 import scala.io.Source
