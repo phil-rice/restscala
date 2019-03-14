@@ -1,5 +1,8 @@
 package one.xingyi.lensdsl.client
 
+import one.xingyi.core.json.{JsonParser, JsonString, JsonWriter}
+import one.xingyi.core.optics.Lens
+
 trait LensLineParser {
   def apply(s: String): LensLine
 }
@@ -15,4 +18,7 @@ class SimpleLensLineParser(implicit lensValueParser: LensValueParser) extends Le
 }
 
 
-case class LensLine(name: String, defns: List[LensDefn])
+case class LensLine(name: String, defns: List[LensDefn[_]])
+
+case class LensDefnToLens[J, T](pf: PartialFunction[LensDefn[T], Lens[J, T]])(implicit jsonWriter: JsonWriter[J], jsonParser: JsonParser[J])
+

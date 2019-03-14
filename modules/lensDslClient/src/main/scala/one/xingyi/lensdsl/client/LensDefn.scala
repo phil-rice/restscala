@@ -1,25 +1,26 @@
 package one.xingyi.lensdsl.client
 
-trait LensDefn
-case class StringLensDefn(name: String) extends LensDefn
-case class IntegerLensDefn(name: String) extends LensDefn
-case class DoubleLensDefn(name: String) extends LensDefn
-case class ViewLensDefn(name: String, clazz: String) extends LensDefn
-case class ListLensDefn(name: String, clazz: String) extends LensDefn
-case class SimpleListLensDefn(name: String, clazz: String) extends LensDefn
-case class FirstItemInListDefn() extends LensDefn
-case class IdentityDefn() extends LensDefn
-case class ItemAsListDefn() extends LensDefn
+trait LensDefn[T] {
+  //  def Lens[Mirror,T]
+}
+case class StringLensDefn(name: String) extends LensDefn[String]
+case class IntegerLensDefn(name: String) extends LensDefn[Int]
+case class DoubleLensDefn(name: String) extends LensDefn[Double]
+case class ViewLensDefn[T](name: String, clazz: String) extends LensDefn[T]
+case class ListLensDefn[T](name: String, clazz: String) extends LensDefn[List[T]]
+case class FirstItemInListDefn[T]() extends LensDefn[T]
+case class IdentityDefn[T]() extends LensDefn[T]
+case class ItemAsListDefn[T]() extends LensDefn[List[T]]
 
 trait LensValueParser {
-  def apply(s: String): List[LensDefn]
+  def apply(s: String): List[LensDefn[_]]
 }
 
 object LensValueParser {
   implicit val simple: LensValueParser = new SimpleLensParser()
 }
 class SimpleLensParser extends LensValueParser {
-  val basic: Map[String, (String => LensDefn)] = Map(
+  val basic: Map[String, (String => LensDefn[_])] = Map(
     "integer" -> IntegerLensDefn.apply,
     "string" -> StringLensDefn.apply,
     "double" -> DoubleLensDefn.apply,
@@ -28,9 +29,8 @@ class SimpleLensParser extends LensValueParser {
     "{itemAsList}" -> (_ => ItemAsListDefn()))
 
 
-  override def apply(s: String): List[LensDefn] = s.split(",").toList.map { item: String =>
+  override def apply(s: String): List[LensDefn[_]] = s.split(",").toList.map { item: String =>
     item.split("/") match {
-      case Array(name, clazz) if clazz.startsWith("**") => SimpleListLensDefn(name, clazz.substring(2))
       case Array(name, clazz) if clazz.startsWith("*") => ListLensDefn(name, clazz.substring(1))
       case Array(name) if basic.contains(name) => basic(name)(name)
       case Array(name, clazz) if basic.contains(clazz) => basic(clazz)(name)

@@ -29,10 +29,10 @@ class LensLanguageTest extends UtilsSpec {
     lensParser.apply("child/childClass,a/address") shouldBe List(ViewLensDefn("child", "childClass"), ViewLensDefn("a", "address"))
     lensParser.apply("child/childClass,a/*address") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "address"))
 
-    lensParser.apply("child/childClass,a/**string") shouldBe List(ViewLensDefn("child", "childClass"), SimpleListLensDefn("a", "string"))
-    lensParser.apply("child/childClass,a/**double") shouldBe List(ViewLensDefn("child", "childClass"), SimpleListLensDefn("a", "double"))
-    lensParser.apply("child/childClass,a/**integer") shouldBe List(ViewLensDefn("child", "childClass"), SimpleListLensDefn("a", "integer"))
-    lensParser.apply("child/childClass,a/**boolean") shouldBe List(ViewLensDefn("child", "childClass"), SimpleListLensDefn("a", "boolean"))
+    lensParser.apply("child/childClass,a/*string") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "string"))
+    lensParser.apply("child/childClass,a/*double") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "double"))
+    lensParser.apply("child/childClass,a/*integer") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "integer"))
+    lensParser.apply("child/childClass,a/*boolean") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "boolean"))
 
     lensParser.apply("child/childClass,{firstItem},a/*address") shouldBe List(ViewLensDefn("child", "childClass"), FirstItemInListDefn(), ListLensDefn("a", "address"))
   }
