@@ -2,14 +2,14 @@
 package one.xingyi.scriptSharedBackend
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.json.{JsonParser, JsonWriter, ObjectProjection}
+import one.xingyi.core.json.{JsonParser, JsonParserWriter, JsonWriter, ObjectProjection}
 
-abstract class ExampleDomainJsonSpec[J: JsonParser, SharedP, DomainP](implicit writer: JsonWriter[J],objectProjection: ObjectProjection[SharedP, DomainP]) extends UtilsSpec {
+abstract class ExampleDomainJsonSpec[J, SharedP, DomainP](implicit jsonParserWriter: JsonParserWriter[J], objectProjection: ObjectProjection[SharedP, DomainP]) extends UtilsSpec {
 
-//  val tel = Telephone("someNumber")
-//  val address1 = Address("line1", "line2", "pc1")
-//  val address2 = Address("line2", "line2", "pc2")
-//  val person = Person("someName", List(address1, address2), tel)
+  //  val tel = Telephone("someNumber")
+  //  val address1 = Address("line1", "line2", "pc1")
+  //  val address2 = Address("line2", "line2", "pc2")
+  //  val person = Person("someName", List(address1, address2), tel)
 
   def person: DomainP
   behavior of "Example Domain ToJson using projections"
@@ -31,11 +31,11 @@ abstract class ExampleDomainJsonSpec[J: JsonParser, SharedP, DomainP](implicit w
   }]
 }"""
   it should "use the projection to turn a person into json" in {
-    writer(implicitly[ObjectProjection[SharedP,DomainP]].toJson(person)).noWhiteSpace shouldBe
+    jsonParserWriter(implicitly[ObjectProjection[SharedP, DomainP]].toJson(person)).noWhiteSpace shouldBe
     json.stripMargin.noWhiteSpace
   }
 
   it should "use the projection to turn json into a person" in {
-    implicitly[ObjectProjection[SharedP,DomainP]].fromJson[J](json) shouldBe person
+    implicitly[ObjectProjection[SharedP, DomainP]].fromJson[J](jsonParserWriter(json)) shouldBe person
   }
 }

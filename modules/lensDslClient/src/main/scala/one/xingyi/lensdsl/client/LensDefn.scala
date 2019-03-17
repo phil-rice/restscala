@@ -1,4 +1,6 @@
 package one.xingyi.lensdsl.client
+import one.xingyi.core.json.{JsonParser, JsonWriter}
+import one.xingyi.core.optics.Lens
 
 trait LensDefn[T] {
   //  def Lens[Mirror,T]

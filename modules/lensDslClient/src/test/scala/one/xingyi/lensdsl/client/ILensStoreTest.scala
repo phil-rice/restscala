@@ -1,10 +1,10 @@
 package one.xingyi.lensdsl.client
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.json.JsonParser
+import one.xingyi.core.json.{JsonParser, JsonParserWriter}
 import one.xingyi.core.optics.Lens
 
-class AbstractLensStoreTest[J](implicit parser: JsonParser[J]) extends UtilsSpec {
+class AbstractLensStoreTest[J](implicit json: JsonParserWriter[J]) extends UtilsSpec {
 
   behavior of getClass.getSimpleName
 
@@ -16,7 +16,7 @@ class AbstractLensStoreTest[J](implicit parser: JsonParser[J]) extends UtilsSpec
       |"d": "value"
       |"e":[1,2,3,4]
       |}""".stripMargin
-  val j = parser(jsonString)
+  val j = json(jsonString)
 
   val lens =
     """aLens=a/integer

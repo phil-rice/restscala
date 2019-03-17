@@ -1,5 +1,6 @@
 package one.xingyi.lensdsl.client
 
+import one.xingyi.core.json.{JsonParser, JsonParserWriter}
 import one.xingyi.core.optics.Lens
 import one.xingyi.core.simpleList.ISimpleList
 
@@ -15,12 +16,14 @@ trait ILensStoreOps[Mirror] {
 trait ILensStore[Mirror] extends ILensStoreOps[Mirror]
 
 object ILensStore {
-  def apply[Mirror](s: String)(implicit lensLensParser: LensLineParser): ILensStore[Mirror] =
-    SimpleLensStore(s.split("\n").map(lensLensParser.apply).toList)
+  def apply[Mirror:JsonParserWriter](s: String)(implicit lensLensParser: LensLineParser): ILensStore[Mirror] =
+    apply(s.split("\n").map(lensLensParser.apply).toList)
 
+  def apply[Mirror: JsonParserWriter](list: List[LensLine]): ILensStore[Mirror] =
+    SimpleLensStore(list.foldLeft(Map[String, Lens[Mirror, _]]())((acc, ll) => acc + (ll.name -> ll.toLens)))
 }
 
-case class SimpleLensStore[Mirror](lines: List[LensLine]) extends ILensStore[Mirror] {
+case class SimpleLensStore[Mirror](lines: Map[String, Lens[Mirror, _]]) extends ILensStore[Mirror] {
 
   override def stringLens(lensName: String): Lens[Mirror, String] = ???
   override def integerLens(lensName: String): Lens[Mirror, Int] = ???

@@ -2,8 +2,7 @@
 package one.xingyi.scriptBackend2
 
 import one.xingyi.core.script.{AbstractEntityServiceFinderRequestTest, EditEntityRequestTest, EntityRequestTest}
-import one.xingyi.json4s.Json4sParser._
-import one.xingyi.json4s.Json4sWriter._
+import one.xingyi.json4s.Json4sParserWriter._
 import one.xingyi.scriptModel2.IPerson
 import org.json4s.JsonAST.JValue
 

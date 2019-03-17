@@ -3,10 +3,10 @@ package one.xingyi.scriptBackend3
 
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.id.CopyWithNewId
-import one.xingyi.core.json.{JsonParser, JsonWriter, ObjectProjection}
+import one.xingyi.core.json.{JsonParser, JsonParserWriter, JsonWriter, ObjectProjection}
 import one.xingyi.scriptModel3.IPerson
 
-abstract class Model3JsonSpec[J: JsonParser](implicit writer: JsonWriter[J], objectProjection: ObjectProjection[IPerson, Person], copyWithNewId: CopyWithNewId[Person, String]) extends UtilsSpec {
+abstract class Model3JsonSpec[J](implicit jsonParserWriter: JsonParserWriter[J], objectProjection: ObjectProjection[IPerson, Person], copyWithNewId: CopyWithNewId[Person, String]) extends UtilsSpec {
 
   behavior of "Example Domain ToJson using projections"
 
@@ -30,11 +30,11 @@ abstract class Model3JsonSpec[J: JsonParser](implicit writer: JsonWriter[J], obj
 
 
   it should "use the projection to turn a person into json" in {
-    writer(implicitly[ObjectProjection[IPerson, Person]].toJson(person)).noWhiteSpace shouldBe
+    jsonParserWriter(implicitly[ObjectProjection[IPerson, Person]].toJson(person)).noWhiteSpace shouldBe
       json.stripMargin.noWhiteSpace
   }
 
   it should "use the projection to turn json into a person" in {
-    implicitly[ObjectProjection[IPerson, Person]].fromJson[J](json) shouldBe person
+    implicitly[ObjectProjection[IPerson, Person]].fromJson[J](jsonParserWriter(json)) shouldBe person
   }
 }

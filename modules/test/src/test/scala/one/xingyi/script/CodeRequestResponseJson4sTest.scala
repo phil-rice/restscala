@@ -3,10 +3,10 @@ package one.xingyi.script
 
 import one.xingyi.core.script.{CodeDetailsRequestTest, CodeRequestResponseTest}
 import one.xingyi.javascript.server.Javascript
-import one.xingyi.json4s.Json4sWriter._
 import one.xingyi.lensdsl.client.{LensDsl, LensDslScriptFixture}
 import one.xongyi.javascript.server.JavascriptScriptFixture
 import org.json4s.JsonAST.JValue
+import one.xingyi.json4s.Json4sParserWriter._
 
 class CodeRequestResponseJson4sAndJavascriptTest extends CodeRequestResponseTest[JValue, Javascript] with JavascriptScriptFixture {
 }

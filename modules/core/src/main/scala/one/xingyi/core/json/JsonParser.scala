@@ -12,7 +12,8 @@ trait FromJson[T] extends Parser[T]
 object FromJson {
 }
 
-trait JsonParser[J] extends (String => J) {
+trait JsonParser[J] {
+  def apply(json: String): J
   def extractInt(j: J): Int
   def extractDouble(j: J): Double
   def extractBoolean(j: J): Boolean
@@ -23,7 +24,9 @@ trait JsonParser[J] extends (String => J) {
   def asListOf[T](j: J, mirrorFn: J => T): List[T]
 }
 
-trait FromJsonLib[J, T] extends (J => T)
+trait FromJsonLib[J, T] {
+  def apply(j: J): T
+}
 
 object FromJsonLib {
   implicit def fromString[J](implicit jsonParser: JsonParser[J]): FromJsonLib[J, String] = jsonParser.extractString(_)
@@ -38,7 +41,7 @@ trait JsonParserLanguage {
 
   implicit class JsonParserOps[J](j: J)(implicit jsonParser: JsonParser[J]) {
     def map[T1](fn: J => T1): List[T1] = jsonParser.asList(j).map(fn)
-    def asList[T1](implicit fromJson: FromJsonLib[J, T1]): List[T1] = map[T1](fromJson)
+    def asList[T1](implicit fromJson: FromJsonLib[J, T1]): List[T1] = map[T1](fromJson.apply)
     def asListP[Shared, Domain](implicit projection: Projection[Shared, Domain]): List[Domain] = map[Domain](projection.fromJson)
     def as[T1](implicit fromJson: FromJsonLib[J, T1]): T1 = fromJson(j)
     def \(s: String): J = jsonParser.\(j, s)

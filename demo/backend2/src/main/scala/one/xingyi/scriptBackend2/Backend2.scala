@@ -7,8 +7,7 @@ import one.xingyi.core.monad.IdentityMonad
 import one.xingyi.core.script.IEntityStore
 import one.xingyi.core.serverMediaType.{DomainDefnToDetails, DomainList, LensLanguages}
 import one.xingyi.javascript.server.Javascript
-import one.xingyi.json4s.Json4sParser._
-import one.xingyi.json4s.Json4sWriter._
+import one.xingyi.json4s.Json4sParserWriter._
 import one.xingyi.scriptModel2.{IAddress, IPerson}
 import one.xingyi.scriptSharedBackend.EntityEndpoints
 import one.xingyi.simplewebframework.simpleServer.CheapServer

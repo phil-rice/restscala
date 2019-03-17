@@ -1,16 +1,14 @@
 package one.xingyi.script
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.json.{JsonParser, JsonWriter, ToJson}
+import one.xingyi.core.json.{JsonParser, JsonWriter}
 import one.xingyi.core.optics.Lens
 import one.xingyi.core.script._
-import one.xingyi.core.serverMediaType.{CodeDetails, DomainDetails, LensLanguage}
+import one.xingyi.core.serverMediaType.{CodeDetails, LensLanguage}
 import one.xingyi.javascript.client.JavascriptXingYiLoader
 import one.xingyi.javascript.server.Javascript
 import one.xingyi.test.client._
 import one.xongyi.javascript.server.JavascriptScriptFixture
 import org.json4s.JValue
-
-import scala.io.Source
 
 abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage](preferedLanguage: ClientPreferedLanguage)(implicit jsonWriter: JsonWriter[J]) extends ScriptFixture[SL] with UtilsSpec {
   behavior of "LensLanguage between client and server"
@@ -91,8 +89,7 @@ abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage
   //  }
 }
 
-import one.xingyi.json4s.Json4sParser._
-import one.xingyi.json4s.Json4sWriter._
+import one.xingyi.json4s.Json4sParserWriter._
 
 
 class JavascriptLensLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, Javascript](ClientPreferedLanguage("javascript")) with JavascriptScriptFixture {

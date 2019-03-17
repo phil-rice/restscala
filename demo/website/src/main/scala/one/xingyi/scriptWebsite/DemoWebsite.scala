@@ -79,8 +79,7 @@ class Website[M[_] : Async, Fail: Failer : LogRequestAndResult, J: JsonParser : 
 
 object Website extends App {
 
-  import one.xingyi.json4s.Json4sParser._
-  import one.xingyi.json4s.Json4sWriter._
+  import one.xingyi.json4s.Json4sParserWriter._
 
   implicit val logger: LoggingAdapter = PrintlnLoggingAdapter
 
