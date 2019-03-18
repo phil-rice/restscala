@@ -7,7 +7,7 @@ import one.xingyi.core.json._
 import one.xingyi.core.language.AnyLanguage._
 import one.xingyi.core.language.FunctionLanguage._
 import one.xingyi.core.optics.Lens
-import org.json4s.JsonAST.{JArray, JObject}
+import org.json4s.JsonAST._
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods
 import org.json4s.{DefaultFormats, JValue}
@@ -39,10 +39,16 @@ trait Json4sParserWriter {
       case JsonList(list) => JArray(list.map(toJ).toList)
     }
     override def toStringForJ = JsonMethods.render _ ~> JsonMethods.pretty
-    override def lensToChild(childname: String): Lens[JValue, JValue] = ???
-    override def lensToString(name: String): Lens[JValue, String] = ???
-    override def lensToDouble(name: String): Lens[JValue, Double] = ???
-    override def lensToInteger(name: String): Lens[JValue, Integer] = ???
+
+    def addChild(childName: String)(j: JValue, childValue: JValue) = j match {
+      case o@JObject(obj) => JObject(obj.filterNot(_._1 == childName) :+ (childName -> childValue))
+      case _ => throw new RuntimeException(s"Cannot extract '$childName' from '$j' as it isn't an object")
+    }
+    override def lensToChild(childname: String): Lens[JValue, JValue] = Lens(_ \ childname, addChild(childname))
+
+    override def lensToString(name: String): Lens[JValue, String] = lensToChild(name) andThen Lens[JValue, String](_.extract[String], (j, s) => JString(s))
+    override def lensToDouble(name: String): Lens[JValue, Double] = lensToChild(name) andThen Lens[JValue, Double](_.extract[Double], (j, s) => JDouble(s))
+    override def lensToInteger(name: String): Lens[JValue, Int] = lensToChild(name) andThen Lens[JValue, Int](_.extract[Int], (j, s) => JInt(s))
     override def lensToList[T](name: String, primitiveClassName: String): Lens[JValue, List[T]] = ???
     override def lensToOptional[T](name: String, primitiveClassName: String): Lens[JValue, Optional[T]] = ???
   }
