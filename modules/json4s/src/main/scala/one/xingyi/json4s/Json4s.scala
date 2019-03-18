@@ -44,13 +44,19 @@ trait Json4sParserWriter {
       case o@JObject(obj) => JObject(obj.filterNot(_._1 == childName) :+ (childName -> childValue))
       case _ => throw new RuntimeException(s"Cannot extract '$childName' from '$j' as it isn't an object")
     }
+
+    def asList[T](fn: JValue => T): (JValue => List[T]) = {
+      case JArray(arr) => arr.map(fn)
+      case j => throw new RuntimeException(s"Cannot extract list from '$j' as it isn't a jarray")
+    }
     override def lensToChild(childname: String): Lens[JValue, JValue] = Lens(_ \ childname, addChild(childname))
 
-    override def lensToString(name: String): Lens[JValue, String] = lensToChild(name) andThen Lens[JValue, String](_.extract[String], (j, s) => JString(s))
-    override def lensToDouble(name: String): Lens[JValue, Double] = lensToChild(name) andThen Lens[JValue, Double](_.extract[Double], (j, s) => JDouble(s))
-    override def lensToInteger(name: String): Lens[JValue, Int] = lensToChild(name) andThen Lens[JValue, Int](_.extract[Int], (j, s) => JInt(s))
-    override def lensToList[T](name: String, primitiveClassName: String): Lens[JValue, List[T]] = ???
-    override def lensToOptional[T](name: String, primitiveClassName: String): Lens[JValue, Optional[T]] = ???
+    override val lensToString: Lens[JValue, String] = Lens[JValue, String](_.extract[String], (j, s) => JString(s))
+    override val lensToDouble: Lens[JValue, Double] = Lens[JValue, Double](_.extract[Double], (j, s) => JDouble(s))
+    override val lensToInteger: Lens[JValue, Int] = Lens[JValue, Int](_.extract[Int], (j, s) => JInt(s))
+    override def lensToList[T](primitiveClassName: String, fn: JValue => T, jMaker: T => JValue): Lens[JValue, List[T]] =
+      Lens[JValue, List[T]](asList(fn), (j, listt) => JArray(listt.map(jMaker)))
+    override def lensToOptional[T](primitiveClassName: String, fn: JValue => T): Lens[JValue, Optional[T]] = ???
   }
 }
 

@@ -23,7 +23,7 @@ object ILensStore {
     SimpleLensStore(list.foldLeft(Map[String, Lens[Mirror, _]]())((acc, ll) => acc + (ll.name -> ll.toLens)))
 }
 
-case class SimpleLensStore[Mirror](lines: Map[String, Lens[Mirror, _]]) extends ILensStore[Mirror] {
+case class SimpleLensStore[Mirror](lines: Map[String, Lens[Mirror, _]])(implicit jsonParserWriter: JsonParserWriter[Mirror]) extends ILensStore[Mirror] {
 
   override def stringLens(lensName: String): Lens[Mirror, String] = ???
   override def integerLens(lensName: String): Lens[Mirror, Int] = ???
