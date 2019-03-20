@@ -65,9 +65,8 @@ abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage
       val json = jsonWriter(ParentForTest.parentProjection.toJson(parent))
       val person = xingyi.parse[Parent](json)
       val childrenLens: Lens[Parent, List[Child]] = (new ParentChildrenOps).childrenLens
-      val firstItemLens = Lens.firstItemL[Child]
       val childNameLens = (new ChildOps).nameLens
-      val nameLens = childrenLens andThen firstItemLens andThen childNameLens
+      val nameLens = childrenLens andThen Lens.itemInListL(0) andThen childNameLens
 
 
       val person2 = nameLens.set(person, "newChildName")

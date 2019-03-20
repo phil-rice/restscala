@@ -1,6 +1,6 @@
 package one.xingyi.lensdsl.client
 
-import one.xingyi.core.json.{JsonParser, JsonParserWriter, JsonString, JsonWriter}
+import one.xingyi.core.json._
 import one.xingyi.core.optics.Lens
 
 trait LensLineParser {
@@ -18,14 +18,25 @@ class SimpleLensLineParser(implicit lensValueParser: LensValueParser) extends Le
 }
 
 
-case class LensLine(name: String, defns: List[LensDefn[_]]) {
+case class LensLine(name: String, defns: List[LensDefn[_, _]]) {
 
-  def toLens[J: JsonParserWriter]: Lens[J, _] = {
-    recurseRoLens[J](defns)
+  def toLens[J: JsonParserWriter, To]: Lens[J, To] = recurse[J](defns).asInstanceOf[Lens[J, To]]
+
+
+  def joinIgnoringTypesInAnEvilWay[A, B, C, D](lens1: Lens[A, B], lens2: Lens[C, D]) = lens1 andThen lens2.asInstanceOf[Lens[B, D]]
+  private def recurse[J: JsonParserWriter](defns: List[LensDefn[_, _]]): Lens[_, _] = {
+    val head = defns.headOption.getOrElse(throw new RuntimeException("Must have at least one lens in a lens defn for name '$name'"))
+    val headLens = head match {
+      case j: JsonLensDefn[_, _] => j.asInstanceOf[JsonLensDefn[J, _]].lens
+      case s: SimpleLensDefn[_, _] => s.lens
+      case v: ViewLensDefn[_, _] => v.lens
+    }
+    defns.tail match {
+      case Nil => headLens
+      case tail => joinIgnoringTypesInAnEvilWay(headLens, recurse(tail))
+    }
   }
-  private def recurseRoLens[J](defns: List[LensDefn[_]])(implicit json: JsonParserWriter[J]): Lens[J, _] = ???
 
 }
 
-case class LensDefnToLens[J, T](pf: PartialFunction[LensDefn[T], Lens[J, T]])(implicit jsonWriter: JsonWriter[J], jsonParser: JsonParser[J])
 

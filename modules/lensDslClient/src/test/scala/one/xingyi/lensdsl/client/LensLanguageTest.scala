@@ -3,45 +3,39 @@ package one.xingyi.lensdsl.client
 import java.util
 
 import one.xingyi.core.UtilsSpec
+import one.xingyi.core.json.NullJsonparserWriter
+import one.xingyi.core.optics.Lens
 
 class LensLanguageTest extends UtilsSpec {
-   val lensParser = implicitly[LensValueParser]
-      val lineParser = implicitly[LensLineParser]
+
+  implicit val parserWriter = new NullJsonparserWriter[Any]
+  private val addressLens: Lens[Any, MirroredObjectForTest[Any]] = Lens[Any, MirroredObjectForTest[Any]](MirroredObjectForTest.apply, (m, f) => f.mirror)
+  implicit val viewNamesToViewLens = new ViewNamesToViewLens(Map("address" -> addressLens))
+
+  val lensParser = implicitly[LensValueParser]
+  val lineParser = implicitly[LensLineParser]
 
   behavior of "LensvalueParser"
 
 
-  it should "parser single items" in {
-    lensParser("line1/string") shouldBe List(StringLensDefn("line1"))
-    lensParser("line1/integer") shouldBe List(IntegerLensDefn("line1"))
-    lensParser("line1/double") shouldBe List(DoubleLensDefn("line1"))
-    lensParser("a/address") shouldBe List(ViewLensDefn("a", "address"))
-    lensParser("a/*address") shouldBe List(ListLensDefn("a", "address"))
-    lensParser("{firstItem}") shouldBe List(FirstItemInListDefn())
-    lensParser("{identity}") shouldBe List(IdentityDefn())
-    lensParser("{itemAsList}") shouldBe List(ItemAsListDefn())
-  }
-
-  it should "item and child" in {
-    lensParser.apply("child/childClass,line1/string") shouldBe List(ViewLensDefn("child", "childClass"), StringLensDefn("line1"))
-    lensParser.apply("child/childClass,line1/integer") shouldBe List(ViewLensDefn("child", "childClass"), IntegerLensDefn("line1"))
-    lensParser.apply("child/childClass,line1/double") shouldBe List(ViewLensDefn("child", "childClass"), DoubleLensDefn("line1"))
-    lensParser.apply("child/childClass,a/address") shouldBe List(ViewLensDefn("child", "childClass"), ViewLensDefn("a", "address"))
-    lensParser.apply("child/childClass,a/*address") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "address"))
-
-    lensParser.apply("child/childClass,a/*string") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "string"))
-    lensParser.apply("child/childClass,a/*double") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "double"))
-    lensParser.apply("child/childClass,a/*integer") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "integer"))
-    lensParser.apply("child/childClass,a/*boolean") shouldBe List(ViewLensDefn("child", "childClass"), ListLensDefn("a", "boolean"))
-
-    lensParser.apply("child/childClass,{firstItem},a/*address") shouldBe List(ViewLensDefn("child", "childClass"), FirstItemInListDefn(), ListLensDefn("a", "address"))
+  it should "parser simple items" in {
+    lensParser("line1,{string}") shouldBe List(ChildLensDefn("line1"), new StringLensDefn())
+    lensParser("line1,{integer}") shouldBe List(ChildLensDefn("line1"), new IntegerLensDefn())
+    lensParser("line1,{double}") shouldBe List(ChildLensDefn("line1"), new DoubleLensDefn())
+    lensParser("a,!address") shouldBe List(ChildLensDefn("a"), ViewLensDefn(addressLens))
+    lensParser("a,*,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ViewLensDefn(addressLens))
+    lensParser("a,*,#0,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ItemInListDefn(0), ViewLensDefn(addressLens))
+    lensParser("a,*,#1,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ItemInListDefn(1), ViewLensDefn(addressLens))
+    lensParser("a,*,#last,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), new LastItemInListDefn(), ViewLensDefn(addressLens))
+    lensParser("{identity}") shouldBe List(new IdentityDefn())
+    lensParser("{itemAsList}") shouldBe List(new ItemAsListDefn())
   }
 
   behavior of "LensLineParser"
 
   it should "parser lines" in {
-    lineParser.apply("lens1=child/childClass,line1/string") shouldBe
-      LensLine("lens1", List(ViewLensDefn("child", "childClass"), StringLensDefn("line1")))
+    lineParser.apply("lens1=child,*,#0,line1,{string}") shouldBe
+      LensLine("lens1", List(ChildLensDefn("child"), new ListLensDefn(), ItemInListDefn(0), ChildLensDefn("line1"), new StringLensDefn()))
   }
 
   //  @Test public void testLensStoreParser () {
