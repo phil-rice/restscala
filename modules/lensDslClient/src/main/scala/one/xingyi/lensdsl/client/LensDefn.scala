@@ -46,7 +46,7 @@ case class ItemInListDefn[From](n: Int) extends SimpleLensDefn[List[From], From]
   override def toString: String = "#" + n
 }
 class LastItemInListDefn[From]() extends SimpleLensDefn[List[From], From] {
-  override def lens: Lens[List[From], From] = Lens(_.last, (old, f) => old.drop(1) :+ f)
+  override def lens: Lens[List[From], From] = Lens(_.last, (old, f) => old.dropRight(1) :+ f)
   override def toString: String = "#last"
 }
 class IdentityDefn[From]() extends SimpleLensDefn[From, From] {

@@ -9,7 +9,7 @@ trait ILensStoreOps[Mirror] {
   def integerLens(lensName: String): Lens[Mirror, Int]
   def doubleLens(lensName: String): Lens[Mirror, Double]
   def booleanLens(lensName: String): Lens[Mirror, Boolean]
-  def listLens(lensName: String): Lens[Mirror, List[Mirror]]
+  def listLens[T](lensName: String, maker: Mirror => T, getter: T => Mirror): Lens[Mirror, List[T]]
 }
 trait ILensStore[Mirror] extends ILensStoreOps[Mirror]
 
@@ -28,5 +28,6 @@ case class SimpleLensStore[Mirror](lines: Map[String, Lens[Mirror, _]])(implicit
   override def integerLens(lensName: String): Lens[Mirror, Int] = lines(lensName).asInstanceOf[Lens[Mirror, Int]]
   override def doubleLens(lensName: String): Lens[Mirror, Double] = lines(lensName).asInstanceOf[Lens[Mirror, Double]]
   override def booleanLens(lensName: String): Lens[Mirror, Boolean] = lines(lensName).asInstanceOf[Lens[Mirror, Boolean]]
-  override def listLens(lensName: String): Lens[Mirror, List[Mirror]] = lines(lensName).asInstanceOf[Lens[Mirror, List[Mirror]]]
- }
+  override def listLens[T](lensName: String, maker: Mirror => T, getter: T => Mirror): Lens[Mirror, List[T]] =
+    Lens.asListLens(lines(lensName).asInstanceOf[Lens[Mirror, List[Mirror]]], maker, getter)
+}

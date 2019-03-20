@@ -7,6 +7,7 @@ object Lens {
 
   def itemInListL[T](n: Int): Lens[List[T], T] = Lens(_ (n), (ts, t) => ts.updated(n, t), name = Some("#" + n))
   def apply[A, B](get: A => B, set: (A, B) => A, name: Option[String] = None): Lens[A, B] = SimpleLens(get, set, name)
+  def asListLens[A, B, T](lens: Lens[A, List[B]], maker: B => T, getter: T => B): Lens[A, List[T]] = ListLens(lens, maker, getter)
 }
 trait Lens[A, B] {
   def get: A => B
@@ -18,6 +19,11 @@ trait Lens[A, B] {
   //  def compose[C](that: Lens[C, A]) = SimpleLens[C, B](c => get(that.get(c)), (c, b) => that.map(c, set(_, b)), name = Some(s"$that andThen ${Lens.this}"))
   def andThen[C](that: Lens[B, C]) = new ComposeLens(this, that)
   def andGet[C](fn: B => C) = get andThen fn
+}
+
+case class ListLens[A, B, T](lens: Lens[A, List[B]], maker: B => T, getter: T => B) extends Lens[A, List[T]] {
+  override def get = a => lens.get(a).map(maker)
+  override def set = (a, listt) => lens.set(a, listt.map(getter))
 }
 
 case class ComposeLens[A, B, C](first: Lens[A, B], second: Lens[B, C]) extends Lens[A, C] {

@@ -1,7 +1,7 @@
 package one.xingyi.lensdsl.client
 
 import one.xingyi.core.UtilsSpec
-import one.xingyi.core.json.JsonParserWriter
+import one.xingyi.core.json.{JsonInt, JsonParserWriter}
 import one.xingyi.core.optics.Lens
 
 class AbstractLensStoreTest[J](implicit json: JsonParserWriter[J]) extends UtilsSpec {
@@ -51,7 +51,8 @@ class AbstractLensStoreTest[J](implicit json: JsonParserWriter[J]) extends Utils
 
   def checkListLens(lens: Lens[J, Int], expected: Int, newValue: Int, changedList: List[Int]): Unit = {
     val j2 = checkLens(lens, expected, newValue)
-    //    val list = lensStore.listLens("eList").get(j)
+    lensStore.listLens("eList", json.extractInt, { i: Int => json.toJ(JsonInt(i)) }).get(j) shouldBe List(0,1,2,3)
+    lensStore.listLens("eList", json.extractInt, { i: Int => json.toJ(JsonInt(i)) }).get(j2) shouldBe changedList
   }
 
   it should "have list lens" in {
