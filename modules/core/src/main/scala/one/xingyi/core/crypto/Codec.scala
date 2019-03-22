@@ -3,9 +3,13 @@ package one.xingyi.core.crypto
 
 import java.util.Base64
 
+import one.xingyi.core.optics.Lens
+
 trait Codec[From, To] {
   def forwards: From => To
   def backwards: To => From
+  def lens: Lens[From, To] = Lens(forwards, (f, t) => backwards(t))
+  def backwardsLens: Lens[To,From] = Lens(backwards, (f, t) =>forwards(t))
 }
 trait Base64Codec extends Codec[Array[Byte], String]
 object Base64Codec {

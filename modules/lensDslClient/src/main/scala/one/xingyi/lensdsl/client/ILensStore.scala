@@ -1,15 +1,18 @@
 package one.xingyi.lensdsl.client
 
+import one.xingyi.core.crypto.Codec
 import one.xingyi.core.json.{JsonParser, JsonParserWriter}
 import one.xingyi.core.optics.Lens
 import one.xingyi.core.simpleList.ISimpleList
+
 
 trait ILensStoreOps[Mirror] {
   def stringLens(lensName: String): Lens[Mirror, String]
   def integerLens(lensName: String): Lens[Mirror, Int]
   def doubleLens(lensName: String): Lens[Mirror, Double]
   def booleanLens(lensName: String): Lens[Mirror, Boolean]
-  def listLens[T](lensName: String, maker: Mirror => T, getter: T => Mirror): Lens[Mirror, List[T]]
+  def listLens[T](lensName: String)(implicit codec: Codec[T, Mirror]): Lens[Mirror, List[T]]
+  def objectlens[T](lensName: String)(implicit codec: Codec[T, Mirror]): Lens[Mirror, T]
 }
 trait ILensStore[Mirror] extends ILensStoreOps[Mirror]
 
@@ -28,6 +31,9 @@ case class SimpleLensStore[Mirror](lines: Map[String, Lens[Mirror, _]])(implicit
   override def integerLens(lensName: String): Lens[Mirror, Int] = lines(lensName).asInstanceOf[Lens[Mirror, Int]]
   override def doubleLens(lensName: String): Lens[Mirror, Double] = lines(lensName).asInstanceOf[Lens[Mirror, Double]]
   override def booleanLens(lensName: String): Lens[Mirror, Boolean] = lines(lensName).asInstanceOf[Lens[Mirror, Boolean]]
-  override def listLens[T](lensName: String, maker: Mirror => T, getter: T => Mirror): Lens[Mirror, List[T]] =
-    Lens.asListLens(lines(lensName).asInstanceOf[Lens[Mirror, List[Mirror]]], maker, getter)
+  //  override def listLens[T](lensName: String, maker: Mirror => T, getter: T => Mirror): Lens[Mirror, List[T]] =
+  override def listLens[T](lensName: String)(implicit codec: Codec[T, Mirror]): Lens[Mirror, List[T]] =
+    Lens.asListLens(lines(lensName).asInstanceOf[Lens[Mirror, List[Mirror]]])
+  override def objectlens[T](lensName: String)(implicit codec: Codec[T, Mirror]): Lens[Mirror, T] =
+    lines(lensName).asInstanceOf[Lens[Mirror, Mirror]] andThen codec.backwardsLens
 }

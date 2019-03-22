@@ -1,6 +1,7 @@
 package one.xingyi.lensdsl.client
 
 import one.xingyi.core.UtilsSpec
+import one.xingyi.core.crypto.Codec
 import one.xingyi.core.json.{JsonInt, JsonParserWriter}
 import one.xingyi.core.optics.Lens
 
@@ -49,17 +50,21 @@ class AbstractLensStoreTest[J](implicit json: JsonParserWriter[J]) extends Utils
     checkLens(lensStore.stringLens("dLens"), "value", "newValue")
   }
 
+
+  implicit val intCodec: Codec[Int, J] = new Codec[Int, J] {
+    override def forwards: Int => J = { i: Int => json.toJ(JsonInt(i)) }
+    override def backwards: J => Int = json.extractInt
+  }
   def checkListLens(lens: Lens[J, Int], expected: Int, newValue: Int, changedList: List[Int]): Unit = {
     val j2 = checkLens(lens, expected, newValue)
-    lensStore.listLens("eList", json.extractInt, { i: Int => json.toJ(JsonInt(i)) }).get(j) shouldBe List(0,1,2,3)
-    lensStore.listLens("eList", json.extractInt, { i: Int => json.toJ(JsonInt(i)) }).get(j2) shouldBe changedList
+    lensStore.listLens("eList").get(j) shouldBe List(0, 1, 2, 3)
+    lensStore.listLens("eList").get(j2) shouldBe changedList
   }
 
   it should "have list lens" in {
     checkListLens(lensStore.integerLens("e0Lens"), 0, 99, List(99, 1, 2, 3))
     checkListLens(lensStore.integerLens("e1Lens"), 1, 99, List(0, 99, 2, 3))
     checkListLens(lensStore.integerLens("elastLens"), 3, 99, List(0, 1, 2, 99))
-
   }
 
 

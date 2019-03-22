@@ -1,9 +1,11 @@
 package one.xingyi.javascript.client
+
 import javax.script.{Invocable, ScriptEngine}
+import one.xingyi.core.crypto.Codec
 import one.xingyi.core.optics.Lens
 import one.xingyi.core.script._
 
-import language.postfixOps
+import scala.language.postfixOps
 
 class JavascriptXingYiLoader() extends IXingYiLoader {
   override def apply(javaScript: String): IXingYi = {
@@ -25,15 +27,15 @@ class JavascriptXingYi(engine: ScriptEngine) extends IXingYi {
 
   override def rawRender(name: String, t: Object): String = wrap("render", inv.invokeFunction(s"render_$name", t).asInstanceOf[String])
 
-  override def objectLens[T1 <: Domain, T2 <: Domain](name: String)(implicit maker1: DomainMaker[T1], maker2: DomainMaker[T2]): Lens[T1, T2] = Lens[T1, T2](
-    { t => wrap(s"objectLens.get($name)", maker2.create(inv.invokeFunction("getL", name, t.mirror))) },
-    { (t, v) => wrap(s"objectLens.set($name)", maker1.create(inv.invokeFunction("setL", name, t.mirror, v.mirror))) })
+  override def objectLens[T1 <: Domain, T2 <: Domain](name: String)(implicit codec1: Codec[T1, Object], codec2: Codec[T2, Object]): Lens[T1, T2] = Lens[T1, T2](
+    { t => wrap(s"objectLens.get($name)", codec2.backwards(inv.invokeFunction("getL", name, t.mirror))) },
+    { (t, v) => wrap(s"objectLens.set($name)", codec1.backwards(inv.invokeFunction("setL", name, t.mirror, v.mirror))) })
 
-  override def stringLens[T <: Domain](name: String)(implicit maker: DomainMaker[T]): Lens[T, String] = Lens[T, String](
+  override def stringLens[T <: Domain](name: String)(implicit codec: Codec[T, Object]): Lens[T, String] = Lens[T, String](
     { t => wrap(s"stringLens.get($name)", inv.invokeFunction("getL", name, t.mirror).asInstanceOf[String]) },
-    { (t, v) => wrap(s"objectstringLensLens.set($name)", maker.create(inv.invokeFunction("setL", name, t.mirror, v))) })
+    { (t, v) => wrap(s"objectstringLensLens.set($name)", codec.backwards(inv.invokeFunction("setL", name, t.mirror, v))) })
 
-  def parse[T <: Domain](s: String)(implicit domainMaker: DomainMaker[T]) = wrap("parse", domainMaker.create(inv.invokeFunction("parse", s)))
+  def parse[T <: Domain](s: String)(implicit codec: Codec[T, Object]) = wrap("parse", codec.backwards(inv.invokeFunction("parse", s)))
 
 
   import java.util
@@ -53,8 +55,8 @@ class JavascriptXingYi(engine: ScriptEngine) extends IXingYi {
   def fromList(list: List[Domain]): Object =
     inv.invokeFunction("makeArray", list.map(_.mirror): _*)
 
-  override def listLens[T1 <: Domain, T2 <: Domain](name: String)(implicit maker1: DomainMaker[T1], maker2: DomainMaker[T2]): Lens[T1, List[T2]] = Lens[T1, List[T2]](
-    { t => toList(inv.invokeFunction("getL", name, t.mirror)).map(maker2.create) }, {
-      (t, v) => maker1.create(inv.invokeFunction("setL", name, t.mirror, fromList(v)))
+  override def listLens[T1 <: Domain, T2 <: Domain](name: String)(implicit codec1: Codec[T1, Object], codec2: Codec[T2, Object]): Lens[T1, List[T2]] = Lens[T1, List[T2]](
+    { t => toList(inv.invokeFunction("getL", name, t.mirror)).map(codec2.backwards) }, {
+      (t, v) => codec1.backwards(inv.invokeFunction("setL", name, t.mirror, fromList(v)))
     })
 }

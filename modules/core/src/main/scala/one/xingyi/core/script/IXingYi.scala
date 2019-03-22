@@ -2,6 +2,7 @@
 package one.xingyi.core.script
 
 import javax.script.{Invocable, ScriptEngine}
+import one.xingyi.core.crypto.Codec
 import one.xingyi.core.http._
 import one.xingyi.core.id.HasId
 import one.xingyi.core.json._
@@ -14,12 +15,18 @@ import scala.language.postfixOps
 trait IXingYiLoader extends (String => IXingYi)
 
 
-trait DomainMaker[T <: Domain] {
-  def create(mirror: Object): T
-}
-
 trait Domain {
   def mirror: Object
+}
+object Domain {
+  implicit def codec[Dom <: Domain](implicit domainMaker: DomainMaker[Dom]) = new Codec[Dom, Object] {
+    override def forwards: Dom => Object = _.mirror
+    override def backwards: Object => Dom = domainMaker.create
+  }
+}
+
+trait DomainMaker[Dom <: Domain] {
+  def create(mirror: Object): Dom
 }
 
 case class ClientPreferedLanguage(s: String)
@@ -55,31 +62,31 @@ object ServerPayload extends JsonWriterLanguage {
     ServerPayload(status, domainObject, langAndDetails._2, langAndDetails._1)
 
   implicit def toServerResponse[J, Req, SharedE, DomainE]
-    (implicit jsonWriter: JsonWriter[J], entityPrefix: EntityPrefix[DomainE],
-     hasId: HasId[Req, String], hasHost: HasHost[Req],
-     projection: Projection[SharedE, DomainE], toContentType: ToContentType[Req]): ToServiceResponse[Req, ServerPayload[SharedE, DomainE]] = { req =>
+  (implicit jsonWriter: JsonWriter[J], entityPrefix: EntityPrefix[DomainE],
+   hasId: HasId[Req, String], hasHost: HasHost[Req],
+   projection: Projection[SharedE, DomainE], toContentType: ToContentType[Req]): ToServiceResponse[Req, ServerPayload[SharedE, DomainE]] = { req =>
     payload =>
       val host = hasHost(req)
       ServiceResponse(payload.status, Body(
         s"http://$host/${entityPrefix()}/code/" + payload.domain.code(payload.lensLanguage).hash + "\n" +
-        jsonWriter(projection.toJson(payload.domainObject) |+| ("_links" ->
-                                                                JsonObject(payload.links(payload.domainObject).map {
-                                                                  case LinkDetail(verb, pattern) => verb -> JsonString(pattern.replace("<id>", hasId(req)).replace("<host>", host))
-                                                                }: _*)))),
+          jsonWriter(projection.toJson(payload.domainObject) |+| ("_links" ->
+            JsonObject(payload.links(payload.domainObject).map {
+              case LinkDetail(verb, pattern) => verb -> JsonString(pattern.replace("<id>", hasId(req)).replace("<host>", host))
+            }: _*)))),
         List(Header("content-type", toContentType(req)), Header("xingyi", payload.domain.name)))
   }
 }
 
 trait IXingYi {
-  def parse[T <: Domain](s: String)(implicit domainMaker: DomainMaker[T]): T
+  def parse[T <: Domain](s: String)(implicit codec: Codec[T, Object]): T
 
   protected def rawRender(name: String, t: Object): String
 
-  def stringLens[T <: Domain](name: String)(implicit maker: DomainMaker[T]): Lens[T, String]
+  def stringLens[T <: Domain](name: String)(implicit codec: Codec[T, Object]): Lens[T, String]
 
-  def objectLens[T1 <: Domain, T2 <: Domain](name: String)(implicit maker1: DomainMaker[T1], maker2: DomainMaker[T2]): Lens[T1, T2]
+  def objectLens[T1 <: Domain, T2 <: Domain](name: String)(implicit codec1: Codec[T1, Object], codex2: Codec[T2, Object]): Lens[T1, T2]
 
-  def listLens[T1 <: Domain, T2 <: Domain](name: String)(implicit maker1: DomainMaker[T1], maker2: DomainMaker[T2]): Lens[T1, List[T2]]
+  def listLens[T1 <: Domain, T2 <: Domain](name: String)(implicit codec1: Codec[T1, Object], codex2: Codec[T2, Object]): Lens[T1, List[T2]]
 
   def render(name: String, t: Domain): String = rawRender(name, t.mirror)
 }
