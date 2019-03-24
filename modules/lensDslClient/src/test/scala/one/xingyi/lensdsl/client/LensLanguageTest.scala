@@ -4,7 +4,7 @@ import java.util
 
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.json.NullJsonparserWriter
-import one.xingyi.core.optics.Lens
+import one.xingyi.core.optics._
 import one.xingyi.core.script.ViewNamesToViewLens
 
 class LensLanguageTest extends UtilsSpec {
@@ -37,7 +37,7 @@ class LensLanguageTest extends UtilsSpec {
 
   it should "parser lines" in {
     lineParser.apply("lens1=child,*,#0,line1,{string}") shouldBe
-      LensLine("lens1", List(ChildLensDefn("child"), new ListLensDefn(), ItemInListDefn(0), ChildLensDefn("line1"), new StringLensDefn()))
+    LensLine("lens1", List(ChildLensDefn("child"), new ListLensDefn(), ItemInListDefn(0), ChildLensDefn("line1"), new StringLensDefn()))
   }
 
   //  @Test public void testLensStoreParser () {

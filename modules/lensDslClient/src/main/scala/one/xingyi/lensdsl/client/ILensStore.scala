@@ -2,7 +2,7 @@ package one.xingyi.lensdsl.client
 
 import one.xingyi.core.crypto.Codec
 import one.xingyi.core.json.{JsonParser, JsonParserWriter, JsonParsingException}
-import one.xingyi.core.optics.Lens
+import one.xingyi.core.optics.{Lens, LensLine, LensLineParser}
 import one.xingyi.core.simpleList.ISimpleList
 
 
