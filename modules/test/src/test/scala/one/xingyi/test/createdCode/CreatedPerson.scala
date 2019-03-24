@@ -6,7 +6,7 @@ import one.xingyi.core.optics.Lens
 import one.xingyi.core.script.{Domain,DomainMaker, IXingYi,ServerDomain}
 
 object ParentDomainForTest1 extends ServerDomain{
-  def lens=List("lens_parent_name_string","lens_parent_house_house","lens_parent_children_childlist","lens_house_houseno_string","lens_house_postcode_string","lens_child_name_string")
+  def lens=List("lens_parent_name_string","lens_parent_house_house","lens_parent_children_childlist","lens_house_postcode_string","lens_house_houseno_string","lens_child_name_string")
 }
 
 case class House (mirror: Object) extends Domain with one.xingyi.core.script.IHouse
@@ -55,11 +55,11 @@ class ParentChildrenOps(implicit val xingYi: IXingYi) extends IParentChildrenOps
 }
 
 object HouseOps {
-   implicit def hasHeader: IXingYiHeaderFor[HouseOps] =  () => List("lens_house_houseno_string","lens_house_postcode_string")
+   implicit def hasHeader: IXingYiHeaderFor[HouseOps] =  () => List("lens_house_postcode_string","lens_house_houseno_string")
 }
 class HouseOps(implicit val xingYi: IXingYi) extends IHouseOps[Lens, House] {
-   def houseNoLens = xingYi.stringLens[House]("lens_house_houseno_string")
    def postCodeLens = xingYi.stringLens[House]("lens_house_postcode_string")
+   def houseNoLens = xingYi.stringLens[House]("lens_house_houseno_string")
 }
 
 object ChildOps {

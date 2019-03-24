@@ -5,6 +5,7 @@ import java.util
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.json.NullJsonparserWriter
 import one.xingyi.core.optics.Lens
+import one.xingyi.core.script.ViewNamesToViewLens
 
 class LensLanguageTest extends UtilsSpec {
 
@@ -22,11 +23,12 @@ class LensLanguageTest extends UtilsSpec {
     lensParser("line1,{string}") shouldBe List(ChildLensDefn("line1"), new StringLensDefn())
     lensParser("line1,{integer}") shouldBe List(ChildLensDefn("line1"), new IntegerLensDefn())
     lensParser("line1,{double}") shouldBe List(ChildLensDefn("line1"), new DoubleLensDefn())
-    lensParser("a,!address") shouldBe List(ChildLensDefn("a"), ViewLensDefn(addressLens))
-    lensParser("a,*,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ViewLensDefn(addressLens))
-    lensParser("a,*,#0,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ItemInListDefn(0), ViewLensDefn(addressLens))
-    lensParser("a,*,#1,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ItemInListDefn(1), ViewLensDefn(addressLens))
-    lensParser("a,*,#last,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), new LastItemInListDefn(), ViewLensDefn(addressLens))
+    lensParser("a,!address") shouldBe List(ChildLensDefn("a"), ViewLensDefn("address", addressLens))
+    lensParser("a,*,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ViewLensDefn("address", addressLens))
+    lensParser("a,*,#0,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ItemInListDefn(0), ViewLensDefn("address", addressLens))
+    lensParser("a,*,#1,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), ItemInListDefn(1), ViewLensDefn("address", addressLens))
+    lensParser("a,*,#last") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), new LastItemInListDefn())
+    lensParser("a,*,#last,!address") shouldBe List(ChildLensDefn("a"), new ListLensDefn(), new LastItemInListDefn(), ViewLensDefn("address", addressLens))
     lensParser("{identity}") shouldBe List(new IdentityDefn())
     lensParser("{itemAsList}") shouldBe List(new ItemAsListDefn())
   }

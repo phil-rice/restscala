@@ -1,4 +1,4 @@
-package one.xingyi.lensdsl.client
+package one.xingyi.lensdsl.server
 
 import one.xingyi.core.codemaker.{LensCodeMaker, MediaType}
 import one.xingyi.core.serverMediaType.{DomainDefn, LensLanguage}

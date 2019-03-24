@@ -1,7 +1,7 @@
 package one.xingyi.lensdsl.client
 
 import one.xingyi.core.crypto.Codec
-import one.xingyi.core.json.{JsonParser, JsonParserWriter}
+import one.xingyi.core.json.{JsonParser, JsonParserWriter, JsonParsingException}
 import one.xingyi.core.optics.Lens
 import one.xingyi.core.simpleList.ISimpleList
 
@@ -16,10 +16,17 @@ trait ILensStoreOps[Mirror] {
 }
 trait ILensStore[Mirror] extends ILensStoreOps[Mirror]
 
+class LensDslParsingException(msg: String, cause: Throwable) extends RuntimeException(msg, cause)
 object ILensStore {
-  def apply[Mirror: JsonParserWriter](s: String)(implicit lensLensParser: LensLineParser): ILensStore[Mirror] =
-    apply(s.split("\n").map(_.trim).map(lensLensParser.apply).toList)
 
+  def wrap[X](msg: String, block: => X): X = try {
+    block
+  } catch {
+    case e: Exception => throw new LensDslParsingException(msg, e)
+  }
+
+  def apply[Mirror: JsonParserWriter](s: String)(implicit lensLensParser: LensLineParser): ILensStore[Mirror] =
+    wrap(s, apply(s.split("\n").map(_.trim).map(lensLensParser.apply).toList))
   def apply[Mirror: JsonParserWriter](list: List[LensLine]): ILensStore[Mirror] =
     SimpleLensStore(list.foldLeft(Map[String, Lens[Mirror, _]]())((acc, ll) => acc + (ll.name -> ll.toLens)))
 }

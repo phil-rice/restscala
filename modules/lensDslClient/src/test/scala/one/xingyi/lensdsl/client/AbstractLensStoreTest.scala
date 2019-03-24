@@ -4,6 +4,7 @@ import one.xingyi.core.UtilsSpec
 import one.xingyi.core.crypto.Codec
 import one.xingyi.core.json.{JsonInt, JsonParserWriter}
 import one.xingyi.core.optics.Lens
+import one.xingyi.core.script.ViewNamesToViewLens
 
 class AbstractLensStoreTest[J](implicit json: JsonParserWriter[J]) extends UtilsSpec {
 

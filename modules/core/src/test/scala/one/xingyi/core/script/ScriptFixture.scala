@@ -13,6 +13,8 @@ import one.xingyi.core.strings.Files
 
 import scala.language.higherKinds
 
+
+
 trait IChild
 case class ChildForTest(name: String, age: Int)
 object ChildForTest {
@@ -78,7 +80,9 @@ trait IHouseOps[L[_, _], P <: IHouse] extends IXingYiSharedOps[L, P] {
 trait IChildOps[L[_, _], P <: IChild] extends IXingYiSharedOps[L, P] {
   def nameLens: L[P, String]
 }
+
 case class ParentForTest(name: String, age: Int, house: HouseForTest, children: List[ChildForTest])
+
 object ParentForTest {
   implicit val proof: ProofOfBinding[IParent, ParentForTest] = new ProofOfBinding
   val prototype = ParentForTest("someParent", 1, HouseForTest(12, "somePostcode"), List())

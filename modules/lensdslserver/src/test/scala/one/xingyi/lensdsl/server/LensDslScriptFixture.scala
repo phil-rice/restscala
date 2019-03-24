@@ -1,5 +1,4 @@
-package one.xingyi.lensdsl.client
-
+package one.xingyi.lensdsl.server
 import one.xingyi.core.codemaker.LensCodeMaker
 
 trait LensDslScriptFixture {
