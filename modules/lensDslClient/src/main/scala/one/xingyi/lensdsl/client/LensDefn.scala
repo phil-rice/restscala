@@ -1,7 +1,8 @@
 package one.xingyi.lensdsl.client
 
-import one.xingyi.core.json.{JsonParser, JsonParserWriter, JsonWriter}
+import one.xingyi.core.json.JsonParserWriter
 import one.xingyi.core.optics.Lens
+import one.xingyi.core.script.ViewNamesToViewLens
 
 trait LensDefn[From, To] {
 }
@@ -9,10 +10,14 @@ trait LensDefn[From, To] {
 trait SimpleLensDefn[From, To] extends LensDefn[From, To] {
   def lens: Lens[From, To]
 }
-trait JsonLensDefn[From, To] extends LensDefn[From, To] {
-  def lens(implicit jsonParserWriter: JsonParserWriter[From]): Lens[From, To]
+
+trait NoElementsEqualAndHashCode {
   override def equals(obj: Any): Boolean = if (obj == null) false else obj.getClass == this.getClass
   override def hashCode(): Int = getClass.hashCode()
+
+}
+trait JsonLensDefn[From, To] extends LensDefn[From, To] with NoElementsEqualAndHashCode {
+  def lens(implicit jsonParserWriter: JsonParserWriter[From]): Lens[From, To]
 }
 class StringLensDefn[From]() extends JsonLensDefn[From, String] {
   override def lens(implicit jsonParserWriter: JsonParserWriter[From]): Lens[From, String] = jsonParserWriter.lensToString
@@ -33,8 +38,8 @@ class BooleanLensDefn[From]() extends JsonLensDefn[From, Boolean] {
   override def lens(implicit jsonParserWriter: JsonParserWriter[From]): Lens[From, Boolean] = jsonParserWriter.lensToBoolean
   override def toString: String = "{boolean}"
 }
-case class ViewLensDefn[From, To](lens: Lens[From, To]) extends LensDefn[From, To] {
-  override def toString: String = "{double}"
+case class ViewLensDefn[From, To](name: String, lens: Lens[From, To]) extends LensDefn[From, To] {
+  override def toString: String = "!" + name + lens
 }
 
 class ListLensDefn[From, To]() extends JsonLensDefn[From, List[From]] {
@@ -45,15 +50,15 @@ case class ItemInListDefn[From](n: Int) extends SimpleLensDefn[List[From], From]
   def lens: Lens[List[From], From] = Lens.itemInListL(n)
   override def toString: String = "#" + n
 }
-class LastItemInListDefn[From]() extends SimpleLensDefn[List[From], From] {
+class LastItemInListDefn[From]() extends SimpleLensDefn[List[From], From] with NoElementsEqualAndHashCode {
   override def lens: Lens[List[From], From] = Lens(_.last, (old, f) => old.dropRight(1) :+ f)
   override def toString: String = "#last"
 }
-class IdentityDefn[From]() extends SimpleLensDefn[From, From] {
+class IdentityDefn[From]() extends SimpleLensDefn[From, From] with NoElementsEqualAndHashCode {
   override def lens: Lens[From, From] = Lens.identity
   override def toString: String = "{identity}"
 }
-class ItemAsListDefn[From, To]() extends SimpleLensDefn[From, List[From]] {
+class ItemAsListDefn[From, To]() extends SimpleLensDefn[From, List[From]] with NoElementsEqualAndHashCode {
   override def lens: Lens[From, List[From]] = Lens(x => List(x), (old, list) => list.head)
   override def toString: String = "{itemAsList}"
 }
@@ -67,14 +72,6 @@ object LensValueParser {
 }
 
 
-class ViewNamesToViewLens(map: Map[String, Lens[_, _]]) {
-  def legalValues = map.keySet.toList.sorted
-  def contains(name: String) = map.contains(name)
-  def lens(name: String) = map.get(name)
-
-}
-
-//TODO check that the views and the lists have legal names. Can do that by passing the names in, as we know those names.
 class SimpleLensParser(viewNamesToViewLens: ViewNamesToViewLens) extends LensValueParser {
 
   override def apply(s: String): List[LensDefn[_, _]] = s.split(",").toList.map { item: String =>
@@ -88,7 +85,7 @@ class SimpleLensParser(viewNamesToViewLens: ViewNamesToViewLens) extends LensVal
       case "*" => new ListLensDefn()
       case "#last" => new LastItemInListDefn()
       case n if n.startsWith("#") => ItemInListDefn(n.substring(1).toInt)
-      case name if name.startsWith("!") && viewNamesToViewLens.contains(name.substring(1)) => ViewLensDefn(viewNamesToViewLens.lens(name.substring(1)).getOrElse(throw new RuntimeException(s"lens '$name references '$name but that is not a legal value. Legal values are ${viewNamesToViewLens.legalValues}")))
+      case name if name.startsWith("!") && viewNamesToViewLens.contains(name.substring(1)) => ViewLensDefn(name.substring(1), viewNamesToViewLens.lens(name.substring(1)).getOrElse(throw new RuntimeException(s"lens '$name references '$name but that is not a legal value. Legal values are ${viewNamesToViewLens.legalValues}")))
       case name => ChildLensDefn(name)
     }
   }
