@@ -60,8 +60,8 @@ class DefaultDomainAndMethodsToDisplayDom(implicit interfaceToImplName: Interfac
       map(sharedClass => EntityDD(interfaceToImplName.impl(sharedClass), sharedClass.getName))
     val lensDefns: List[(String, LensDefn[_, _])] = domainDefn.interfacesToProjections.flatMap { case InterfaceAndProjection(projection, interface) =>
       Reflect(interface).zeroParamMethodsNameAndValue[IXingYiLens[_, _]].map(l => (l._1, domainDefn.projectionLens(l._2)))
-    }
-    val map = lensDefns.foldLeft(Map[String, List[LensMethodDD]]()) { case (acc, (name, ld)) => acc addToList (ld.classA.runtimeClass.getName -> LensMethodDD(name, ld.name)) }
+    }.sortBy(_._1)
+    val map: Map[String, List[LensMethodDD]] = lensDefns.foldLeft(Map[String, List[LensMethodDD]]()) { case (acc, (name, ld)) => acc addToList (ld.classA.runtimeClass.getName -> LensMethodDD(name, ld.name)) }
 
     DomainDD(domainDefn.domainName, domainAndMethods.methodDatas.map(md => MethodDD(md.method.toString, md.urlPattern)).sortBy(_.methodName), entityDDs, map, domainDefn.renderers)
   }

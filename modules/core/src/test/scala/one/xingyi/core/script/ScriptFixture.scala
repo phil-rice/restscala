@@ -202,9 +202,17 @@ trait ScriptFixture[L <: LensLanguage] {
     List(EntityDD("House", "one.xingyi.core.script.IHouse"),
       EntityDD("Child", "one.xingyi.core.script.IChild"),
       EntityDD("Parent", "one.xingyi.core.script.IParent")),
-    Map("one.xingyi.core.script.IParent" -> List(LensMethodDD("nameLens", "lens_parent_name_string"), LensMethodDD("houseLens", "lens_parent_house_house"), LensMethodDD("childrenLens", "lens_parent_children_childlist")),
-      "one.xingyi.core.script.IHouse" -> List(LensMethodDD("houseNoLens", "lens_house_houseno_string"), LensMethodDD("postCodeLens", "lens_house_postcode_string")),
-      "one.xingyi.core.script.IChild" -> List(LensMethodDD("nameLens", "lens_child_name_string"))),
+    Map(
+      "one.xingyi.core.script.IParent" -> List(
+        LensMethodDD("childrenLens", "lens_parent_children_childlist"),
+        LensMethodDD("houseLens", "lens_parent_house_house"),
+        LensMethodDD("nameLens", "lens_parent_name_string")),
+      "one.xingyi.core.script.IHouse" -> List(
+        LensMethodDD("houseNoLens", "lens_house_houseno_string"),
+        LensMethodDD("postCodeLens", "lens_house_postcode_string")
+      ),
+      "one.xingyi.core.script.IChild" -> List(
+        LensMethodDD("nameLens", "lens_child_name_string"))),
     List("renderer1", "renderer2"))
 
 
@@ -215,8 +223,9 @@ trait ScriptFixture[L <: LensLanguage] {
         EntityDD("Child", "one.xingyi.core.script.IChild"),
         EntityDD("Parent", "one.xingyi.core.script.IParent")),
       Map("one.xingyi.core.script.IParent" ->
-          List(LensMethodDD("nameLens", "lens_parent_name_string"),
-            LensMethodDD("childrenLens", "lens_parent_children_childlist"))),
+          List(
+            LensMethodDD("childrenLens", "lens_parent_children_childlist"),
+            LensMethodDD("nameLens", "lens_parent_name_string"))),
       List("renderer1", "renderer2"))
 
 }

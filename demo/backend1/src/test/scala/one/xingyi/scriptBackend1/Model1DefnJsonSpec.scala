@@ -10,7 +10,7 @@ abstract class Model1DefnJsonSpec[J](implicit parserWriter: JsonParserWriter[J])
 
   behavior of "Example Domain ToJson using projections"
 
-  val json =
+  val json =  
     """{
   "name":"someName",
   "line1":"someLine1",

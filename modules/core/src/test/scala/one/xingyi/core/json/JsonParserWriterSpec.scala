@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 
 class JsonParserWriterSpec[J: ClassTag](implicit parserWriter: JsonParserWriter[J]) extends JsonParserAndWriterSpec[J] {
 
-  val jsonString = """{"name":"someName","age":23,""" + """"addresses":[{"line1":"someLine1a","line2":"someLine2a","postcode":"somePostcode1"},{"line1":"someLine1b","line2":"someLine2b","postcode":"somePostcode2"}],""" + """"telephone":{"number":"someNumber"}}"""
+  val jsonString = """{"name":"someName","approved":false,"age":23,""" + """"addresses":[{"line1":"someLine1a","line2":"someLine2a","postcode":"somePostcode1"},{"line1":"someLine1b","line2":"someLine2b","postcode":"somePostcode2"}],""" + """"telephone":{"number":"someNumber"}}"""
   val jsonStringWithLists = """{"bool": false,"listOfStrings":["one","two","three"],""" + """"listOfInts":[1,2,3],""" + """"listOfDoubles":[1.0,2.0,3.0],""" + """"listOfBooleans":[false, true, false]""" + """}"""
 
   def check[T](supplier: => Lens[J, T], expected: T, newValue: T): Unit = {
@@ -30,7 +30,7 @@ class JsonParserWriterSpec[J: ClassTag](implicit parserWriter: JsonParserWriter[
     check(lensToChild("age") andThen lensToInteger, 23, 999)
   }
   it should "have an boolean lens " in {
-    check(lensToChild("bool") andThen lensToBoolean, false, true)
+    check(lensToChild("approved") andThen lensToBoolean, false, true)
   }
 
   it should "be able to chain child lens'" in {
