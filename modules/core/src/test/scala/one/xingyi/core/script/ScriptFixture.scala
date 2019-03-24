@@ -14,7 +14,6 @@ import one.xingyi.core.strings.Files
 import scala.language.higherKinds
 
 
-
 trait IChild
 case class ChildForTest(name: String, age: Int)
 object ChildForTest {
@@ -187,10 +186,13 @@ trait ScriptFixture[L <: LensLanguage] {
     List(EntityCD("House", "one.xingyi.core.script.IHouse"),
       EntityCD("Child", "one.xingyi.core.script.IChild"),
       EntityCD("Parent", "one.xingyi.core.script.IParent")),
-    List(InterfaceCD("IParentNameOps", "ParentNameOps", List("Parent"), List(LensMethodCD("nameLens", "lens_parent_name_string", "stringLens[Parent]"))),
+    List(InterfaceCD("IParentNameOps", "ParentNameOps", List("Parent"), List(
+      LensMethodCD("nameLens", "lens_parent_name_string", "stringLens[Parent]"))),
       InterfaceCD("IParentHouseOps", "ParentHouseOps", List("Parent", "House"), List(LensMethodCD("houseLens", "lens_parent_house_house", "objectLens[Parent,House]"))),
       InterfaceCD("IParentChildrenOps", "ParentChildrenOps", List("Parent", "Child"), List(LensMethodCD("childrenLens", "lens_parent_children_childlist", "listLens[Parent,Child]"))),
-      InterfaceCD("IHouseOps", "HouseOps", List("House"), List(LensMethodCD("houseNoLens", "lens_house_houseno_string", "stringLens[House]"), LensMethodCD("postCodeLens", "lens_house_postcode_string", "stringLens[House]"))),
+      InterfaceCD("IHouseOps", "HouseOps", List("House"), List(
+        LensMethodCD("houseNoLens", "lens_house_houseno_string", "stringLens[House]"),
+        LensMethodCD("postCodeLens", "lens_house_postcode_string", "stringLens[House]"))),
       InterfaceCD("IChildOps", "ChildOps", List("Child"), List(LensMethodCD("nameLens", "lens_child_name_string", "stringLens[Child]")))))
 
 

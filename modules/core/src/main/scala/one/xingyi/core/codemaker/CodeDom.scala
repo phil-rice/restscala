@@ -136,7 +136,7 @@ class DefaultDomainDefnToCodeDom(implicit interfaceToImplName: InterfaceToImplNa
           val lens = domainDefn.projectionLens.getOrElse(l, throw new RuntimeException(s"Cannot find lens with name $name Legal values are ${domainDefn.projectionLens.keySet.map{x => val y = x; x}}"))
           val lensType = lensDefnToLensType(lens)
           LensMethodCD(name, lens.name, lensType)
-        })
+        }.sortBy(_.methodName))
     }
 
     DomainCD(domainDefn.packageName, domainDefn.sharedPackageName, domainDefn.domainName, DomainDefnToCodeDom.imports(domainDefn.sharedPackageName), entityCDs, opCds)
