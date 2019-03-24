@@ -3,7 +3,12 @@ package one.xingyi.lensdsl.client
 import one.xingyi.core.crypto.Codec
 import one.xingyi.core.json.{JsonParser, JsonParserWriter}
 import one.xingyi.core.optics.Lens
-import one.xingyi.core.script.{Domain, IXingYi}
+import one.xingyi.core.script.{Domain, IXingYi, IXingYiLoader}
+
+object LensDslXingYiLoader {
+  implicit def loader[J](implicit json: JsonParserWriter[J], lensLensParser: LensLineParser): IXingYiLoader =
+    dsl => new LensDslXingYi[J](ILensStore.apply(dsl))
+}
 
 class LensDslXingYi[J](lensStore: ILensStore[J])(implicit json: JsonParserWriter[J]) extends IXingYi {
   override def parse[T <: Domain](s: String)(implicit codec: Codec[T, Object]) = codec.backwards(json(s).asInstanceOf[Object])

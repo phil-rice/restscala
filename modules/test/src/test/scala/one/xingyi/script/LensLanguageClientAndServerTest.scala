@@ -1,4 +1,5 @@
 package one.xingyi.script
+
 import one.xingyi.core.UtilsSpec
 import one.xingyi.core.json.{JsonParser, JsonWriter}
 import one.xingyi.core.optics.Lens
@@ -6,6 +7,7 @@ import one.xingyi.core.script._
 import one.xingyi.core.serverMediaType.{CodeDetails, LensLanguage}
 import one.xingyi.javascript.client.JavascriptXingYiLoader
 import one.xingyi.javascript.server.Javascript
+import one.xingyi.lensdsl.client._
 import one.xingyi.test.client._
 import one.xongyi.javascript.server.JavascriptScriptFixture
 import org.json4s.JValue
@@ -94,6 +96,6 @@ import one.xingyi.json4s.Json4sParserWriter._
 class JavascriptLensLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, Javascript](ClientPreferedLanguage("javascript")) with JavascriptScriptFixture {
   override def loader: IXingYiLoader = new JavascriptXingYiLoader
 }
-//class LensDSlLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, LensDsl](ClientPreferedLanguage("lensdsl")) with LensDslScriptFixture {
-//  override def loader: IXingYiLoader = ???
-//}
+class LensDSlLanguageClientAndServerTest(implicit lensLineParser: LensLineParser) extends LensLanguageClientAndServerTest[JValue, LensDsl](ClientPreferedLanguage("lensdsl")) with LensDslScriptFixture {
+  override def loader: IXingYiLoader = LensDslXingYiLoader.loader[JValue]
+}

@@ -12,8 +12,9 @@ import one.xingyi.core.serverMediaType.{DomainDetails, LensLanguage}
 import scala.language.postfixOps
 
 
-trait IXingYiLoader extends (String => IXingYi)
-
+trait IXingYiLoader {
+  def apply(s: String): IXingYi
+}
 
 trait Domain {
   def mirror: Object
