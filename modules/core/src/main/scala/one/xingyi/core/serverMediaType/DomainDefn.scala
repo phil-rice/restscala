@@ -25,8 +25,8 @@ class DomainDefn[SharedE, DomainE: ClassTag](val sharedPackageName: String, val 
   def packageName: String = getClass.getPackage.getName
   def domainName: String = getClass.getSimpleName
 
-  val projectionLens: Map[IXingYiLens[_, _], LensDefn[_, _]] = interfacesToProjections.flatMap(x => projectionToLensDefns(x.projection)).distinct.toMap
-  val manualLens: List[LensDefn[_, _]] = manual.flatMap(Reflect(_).zeroParamMethodsNameAndValue[XingYiManualPath[_, _]].map { case (name, path) => path.makeManualLens(name) }.toList)
+  val projectionLens: Map[IXingYiLens[_, _], LensDefnFromProjection[_, _]] = interfacesToProjections.flatMap(x => projectionToLensDefns(x.projection)).distinct.toMap
+  val manualLens: List[LensDefnFromProjection[_, _]] = manual.flatMap(Reflect(_).zeroParamMethodsNameAndValue[XingYiManualPath[_, _]].map { case (name, path) => path.makeManualLens(name) }.toList)
   val lens = (projectionLens.values ++ manualLens).toList
 
   def accepts: String = DomainDefn.accepts(lens.map(_.name))
@@ -41,7 +41,7 @@ class DomainDefn[SharedE, DomainE: ClassTag](val sharedPackageName: String, val 
 }
 
 case class XingYiManualPath[A, B](prefix: String, lensType: String, javascript: String, isList: Boolean = false)(implicit val classTag: ClassTag[A], val childClassTag: ClassTag[B]) {
-  def makeManualLens(name: String) = ManualLensDefn[A, B](prefix, isList, javascript)
+  def makeManualLens(name: String) = ManualLensDefnFromProjection[A, B](prefix, isList, javascript)
 }
 
 case class InterfaceAndProjection[Shared, Domain](projection: ObjectProjection[Shared, Domain], sharedOps: IXingYiSharedOps[IXingYiLens, Shared])

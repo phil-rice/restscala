@@ -2,7 +2,7 @@
 package one.xingyi.javascript.server
 
 import one.xingyi.core.codemaker._
-import one.xingyi.core.json.{LensDefn, ManualLensDefn, SimpleLensDefn}
+import one.xingyi.core.json.{LensDefnFromProjection, ManualLensDefnFromProjection, SimpleLensDefnFromProjection}
 import one.xingyi.core.serverMediaType.{DomainDefn, LensLanguage}
 
 import scala.io.Source
@@ -24,10 +24,10 @@ class JsMaker extends LensCodeMaker[Javascript] {
     case one :: Nil => s"""function $name(){ return ${oneLens(one)};}; """
     case names => s"""function $name(){ return ${manyLens(names)}; }"""
   }
-  def fromLensDefns(lensDefn: LensDefn[_, _]): String =
+  def fromLensDefns(lensDefn: LensDefnFromProjection[_, _]): String =
     lensDefn match {
-      case s: SimpleLensDefn[_, _] => lens(s.name, s.names)
-      case s: ManualLensDefn[_, _] => s.javascript
+      case s: SimpleLensDefnFromProjection[_, _] => lens(s.name, s.names)
+      case s: ManualLensDefnFromProjection[_, _] => s.javascript
     }
   override def apply[SharedE, DomainE](defn: DomainDefn[SharedE, DomainE]): String = (header :: defn.lens.sortBy(_.name).map(fromLensDefns)).mkString("\n")
 

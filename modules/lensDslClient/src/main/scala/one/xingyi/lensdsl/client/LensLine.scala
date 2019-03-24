@@ -1,7 +1,7 @@
 package one.xingyi.lensdsl.client
 
 import one.xingyi.core.json._
-import one.xingyi.core.optics.Lens
+import one.xingyi.core.optics.{Lens, LensDefn}
 
 trait LensLineParser {
   def apply(s: String): LensLine

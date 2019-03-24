@@ -1,11 +1,10 @@
 package one.xingyi.lensdsl.client
 
 import one.xingyi.core.json.JsonParserWriter
-import one.xingyi.core.optics.Lens
+import one.xingyi.core.optics.{Lens, LensDefn}
 import one.xingyi.core.script.ViewNamesToViewLens
 
-trait LensDefn[From, To] {
-}
+
 
 trait SimpleLensDefn[From, To] extends LensDefn[From, To] {
   def lens: Lens[From, To]
