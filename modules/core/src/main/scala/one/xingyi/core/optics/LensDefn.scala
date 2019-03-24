@@ -38,7 +38,7 @@ class BooleanLensDefn[From]() extends JsonLensDefn[From, Boolean] {
   override def toString: String = "{boolean}"
 }
 case class ViewLensDefn[From, To](name: String, lens: Lens[From, To]) extends LensDefn[From, To] {
-  override def toString: String = "!" + name + lens
+  override def toString: String = "!" + name
 }
 
 class ListLensDefn[From, To]() extends JsonLensDefn[From, List[From]] {
