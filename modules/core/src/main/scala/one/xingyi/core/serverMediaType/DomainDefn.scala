@@ -4,6 +4,7 @@ package one.xingyi.core.serverMediaType
 import one.xingyi.core.codemaker._
 import one.xingyi.core.exceptions.CannotRespondToQuery
 import one.xingyi.core.json._
+import one.xingyi.core.optics.{LensLine, LensLineParser}
 import one.xingyi.core.reflection.{ClassTags, Reflect}
 
 import scala.language.implicitConversions
@@ -27,7 +28,7 @@ class DomainDefn[SharedE, DomainE: ClassTag](val sharedPackageName: String, val 
 
   val projectionLens: Map[IXingYiLens[_, _], LensDefnFromProjection[_, _]] = interfacesToProjections.flatMap(x => projectionToLensDefns(x.projection)).distinct.toMap
   val manualLens: List[LensDefnFromProjection[_, _]] = manual.flatMap(Reflect(_).zeroParamMethodsNameAndValue[XingYiManualPath[_, _]].map { case (name, path) => path.makeManualLens(name) }.toList)
-  val lens = (projectionLens.values ++ manualLens).toList
+  val lens = (projectionLens.values ++ manualLens).toList.sortBy(_.name)
 
   def accepts: String = DomainDefn.accepts(lens.map(_.name))
 
@@ -40,8 +41,10 @@ class DomainDefn[SharedE, DomainE: ClassTag](val sharedPackageName: String, val 
        |""".stripMargin
 }
 
-case class XingYiManualPath[A, B](prefix: String, lensType: String, javascript: String, isList: Boolean = false)(implicit val classTag: ClassTag[A], val childClassTag: ClassTag[B]) {
-  def makeManualLens(name: String) = ManualLensDefnFromProjection[A, B](prefix, isList, javascript)
+case class XingYiManualPath[A, B](lensDefn: String)(implicit val classTag: ClassTag[A], val childClassTag: ClassTag[B], lensLineParser: LensLineParser) {
+  val lensLine = lensLineParser(lensDefn)
+  def makeManualLens(name: String) = ManualLensDefnFromProjection[A, B](lensLine.name, lensLine.defns)
+
 }
 
 case class InterfaceAndProjection[Shared, Domain](projection: ObjectProjection[Shared, Domain], sharedOps: IXingYiSharedOps[IXingYiLens, Shared])
@@ -59,8 +62,8 @@ object DomainList {
 case class DomainList[SharedE, DomainE](firstDomain: DomainDetails[SharedE, DomainE], restDomains: DomainDetails[SharedE, DomainE]*) {
   val domains = firstDomain :: restDomains.toList
 
-  def accept(xingyiHeader: Option[String], defaultLanguage: LensLanguage)(implicit xingYiHeaderToLensNames: IXingYiHeaderToLensNames): (LensLanguage,DomainDetails[SharedE, DomainE]) =
-    xingyiHeader.flatMap(xingYiHeaderToLensNames.accept).fold((defaultLanguage,firstDomain))(details => domains.find(_.isDefinedAt(details.lensNames)).map(d=>(details.lensDlsName, d)).getOrElse(throw cannotRespondException(xingyiHeader, details)))
+  def accept(xingyiHeader: Option[String], defaultLanguage: LensLanguage)(implicit xingYiHeaderToLensNames: IXingYiHeaderToLensNames): (LensLanguage, DomainDetails[SharedE, DomainE]) =
+    xingyiHeader.flatMap(xingYiHeaderToLensNames.accept).fold((defaultLanguage, firstDomain))(details => domains.find(_.isDefinedAt(details.lensNames)).map(d => (details.lensDlsName, d)).getOrElse(throw cannotRespondException(xingyiHeader, details)))
 
   def cannotRespondException(xingyiHeader: Option[String], details: XingYiHeaderDetails) =
     new CannotRespondToQuery(xingyiHeader, details, DomainDetails.stringsToString(details.lensNames), domains.map(d => (d.name, d.lensNames, details.lensNames -- d.lensNames)))

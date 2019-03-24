@@ -27,7 +27,7 @@ class CreateFilesFromExample2 extends UtilsSpec {
     checkCorrectDirectory
 
     val codeMaker = implicitly[LensCodeMaker[Javascript]]
-    val javascript = codeMaker.apply(new Model2Defn)
+    val javascript = codeMaker.apply(new Model2LegacyDefn)
     Files.printToFile(javascriptFile)(pw => pw.print(javascript))
   }
 

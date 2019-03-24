@@ -40,14 +40,26 @@ function lens(field) {
     };
 }
 
-function lensForFirstItemInList() {
+function lensForLastItemInList() {
     return {
         "get": function (list) {
-            return list[0];
+            return list[list.length-1];
         },
         "set": function (list, item) {
             var newArray = list.slice();
-            newArray[0] = item;
+            newArray[list.length-1] = item;
+            return newArray
+        }
+    }
+}
+function lensForItemInList(n) {
+    return {
+        "get": function (list) {
+            return list[n];
+        },
+        "set": function (list, item) {
+            var newArray = list.slice();
+            newArray[n] = item;
             return newArray
         }
     }

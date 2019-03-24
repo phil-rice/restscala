@@ -129,8 +129,7 @@ class ParentDomainForTest2 extends DomainDefn[IParent, ParentForTest](
   ), List(
     new IParentHousePostCodeOps[XingYiManualPath, IParent] {
       override def housePostcodeLens: XingYiManualPath[IParent, String] =
-        XingYiManualPath("lens_person_postcode_string", "stringLens",
-          """function lens_person_postcode_string() { return compose(xxx(), xx())}""")
+        XingYiManualPath("lens_person_postcode_string=person,post,{string}")
     }
   ))
 

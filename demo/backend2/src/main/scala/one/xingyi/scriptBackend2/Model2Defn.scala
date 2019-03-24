@@ -112,11 +112,8 @@ class Model2LegacyDefn extends DomainDefn[IPerson, Person]("one.xingyi.scriptMod
     Telephone.telephoneOps -> Telephone.projection),
   List(
     new IPersonLine12Ops[XingYiManualPath, IPerson] {
-      override val line1Lens = XingYiManualPath[IPerson, String]("lens_person_line1_string", "stringLens",
-        """function lens_person_line1_string() { return compose(lens_person_address_address(), lens("line1"))}""")
-
-      override def line2Lens = XingYiManualPath[IPerson, String]("lens_person_line2_string", "stringLens",
-        """function lens_person_line2_string() { return compose(lens_person_address_address(), lens("line2"))}""")
+      override val line1Lens = XingYiManualPath[IPerson, String]("lens_person_line1_string=address,line1,{string}")
+      override def line2Lens = XingYiManualPath[IPerson, String]("lens_person_line2_string=address,line2,{string}")
     })) {
   override def packageName: String = "one.xingyi.scriptExample.createdCode"
 

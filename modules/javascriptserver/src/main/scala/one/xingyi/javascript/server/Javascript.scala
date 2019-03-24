@@ -3,7 +3,9 @@ package one.xingyi.javascript.server
 
 import one.xingyi.core.codemaker._
 import one.xingyi.core.json.{LensDefnFromProjection, ManualLensDefnFromProjection, SimpleLensDefnFromProjection}
+import one.xingyi.core.optics._
 import one.xingyi.core.serverMediaType.{DomainDefn, LensLanguage}
+import one.xingyi.core.strings.Strings
 
 import scala.io.Source
 
@@ -16,7 +18,7 @@ object Javascript extends Javascript {
   implicit def lensCodeMaker: LensCodeMaker[Javascript] = new JsMaker
 }
 
-class JsMaker extends LensCodeMaker[Javascript] {
+class JsMaker (implicit lensLineToJavascript: LensLineToJavascript)extends LensCodeMaker[Javascript] {
   lazy val header = Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("header.js")).mkString
   def oneLens(name: String) = s"""lens("$name")"""
   def manyLens(names: List[String]) = names.map(name => oneLens(name)).mkString("compose(", ",", ");")
@@ -27,8 +29,13 @@ class JsMaker extends LensCodeMaker[Javascript] {
   def fromLensDefns(lensDefn: LensDefnFromProjection[_, _]): String =
     lensDefn match {
       case s: SimpleLensDefnFromProjection[_, _] => lens(s.name, s.names)
-      case s: ManualLensDefnFromProjection[_, _] => s.javascript
+      case s: ManualLensDefnFromProjection[_, _] => lensLineToJavascript(LensLine(s.name, s.lensDefns))
     }
   override def apply[SharedE, DomainE](defn: DomainDefn[SharedE, DomainE]): String = (header :: defn.lens.sortBy(_.name).map(fromLensDefns)).mkString("\n")
 
 }
+
+
+
+
+

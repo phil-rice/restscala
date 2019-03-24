@@ -32,15 +32,17 @@ object ProjectionToLensDefns {
 
 sealed abstract class LensDefnFromProjection[A, B](implicit val classA: ClassTag[A], val classB: ClassTag[B]) {
   def name: String
-  def isList: Boolean
+  def lensDefns: List[LensDefn[_, _]]
+  def isList: Boolean = lensLine.defns.find(_.isInstanceOf[ListLensDefn[_, _]]).isDefined
+  def lensLine: LensLine = LensLine(name, lensDefns)
+
   val a = classA.runtimeClass.getSimpleName
   val b = classB.runtimeClass.getSimpleName
 }
 case class SimpleLensDefnFromProjection[A: ClassTag, B: ClassTag](name: String, lensDefns: List[LensDefn[_, _]]) extends LensDefnFromProjection[A, B] {
-  override def isList: Boolean = lensDefns.find(_.isInstanceOf[ListLensDefn[_, _]]).isDefined
   def names: List[String] = lensDefns.collect { case c: ChildLensDefn[_] => c.name }
 }
-case class ManualLensDefnFromProjection[A: ClassTag, B: ClassTag](name: String, isList: Boolean, javascript: String) extends LensDefnFromProjection[A, B]
+case class ManualLensDefnFromProjection[A: ClassTag, B: ClassTag](name: String, lensDefns: List[LensDefn[_, _]]) extends LensDefnFromProjection[A, B]
 
 
 trait LensNameForJavascript[A, B] {
@@ -61,7 +63,7 @@ object LensDefnFromProjection {
   def string[A: ClassTag](name: String)(implicit lensNameForJavascript: LensNameForJavascript[A, String]): LensDefnFromProjection[A, String] =
     SimpleLensDefnFromProjection(lensNameForJavascript(name, false), List(new ChildLensDefn[A](name), new StringLensDefn))
   def obj[A: ClassTag, B: ClassTag](name: String)(implicit lensNameForJavascript: LensNameForJavascript[A, B]): LensDefnFromProjection[A, B] =
-    SimpleLensDefnFromProjection(lensNameForJavascript(name, false), List(new ChildLensDefn[A](name), new ViewLensDefn(ClassTags.lowerCaseNameOf[B], Lens.cast))) // A clear indication that ViewLensDefn isn't quite right.... need to move lens out of here
+    SimpleLensDefnFromProjection(lensNameForJavascript(name, false), List(new ChildLensDefn[A](name), new ViewLensDefn(ClassTags.lowerCaseNameOf[B])))
   def list[A: ClassTag, B: ClassTag](name: String)(implicit lensNameForJavascript: LensNameForJavascript[A, B]): LensDefnFromProjection[A, B] = {
     SimpleLensDefnFromProjection(lensNameForJavascript(name, true), List(new ChildLensDefn[A](name), new ListLensDefn()));
   }

@@ -23,7 +23,7 @@ object Backend2 extends App {
 
   import SimpleLogRequestAndResult._
 
-  implicit val domainList = DomainList(DomainDefnToDetails(new Model2Defn), DomainDefnToDetails(new Model2LegacyDefn))
+  implicit val domainList = DomainList(DomainDefnToDetails(new Model2LegacyDefn),DomainDefnToDetails(new Model2Defn) )
 
   implicit val personStore = IEntityStore.demo[IdentityMonad, Throwable, IPerson, Person]
   implicit val addressStore = IEntityStore.demo[IdentityMonad, Throwable, IAddress, Address]

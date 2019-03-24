@@ -3,6 +3,7 @@ package one.xingyi.lensdsl.client
 import one.xingyi.core.crypto.Codec
 import one.xingyi.core.json.{JsonParser, JsonParserWriter, JsonParsingException}
 import one.xingyi.core.optics.{Lens, LensLine, LensLineParser}
+import one.xingyi.core.script.ViewNamesToViewLens
 import one.xingyi.core.simpleList.ISimpleList
 
 
@@ -25,9 +26,9 @@ object ILensStore {
     case e: Exception => throw new LensDslParsingException(msg, e)
   }
 
-  def apply[Mirror: JsonParserWriter](s: String)(implicit lensLensParser: LensLineParser): ILensStore[Mirror] =
+  def apply[Mirror: JsonParserWriter](s: String)(implicit lensLensParser: LensLineParser, viewNamesToViewLens: ViewNamesToViewLens): ILensStore[Mirror] =
     wrap(s, apply(s.split("\n").map(_.trim).map(lensLensParser.apply).toList))
-  def apply[Mirror: JsonParserWriter](list: List[LensLine]): ILensStore[Mirror] =
+  def apply[Mirror: JsonParserWriter](list: List[LensLine])(implicit viewNamesToViewLens: ViewNamesToViewLens): ILensStore[Mirror] =
     SimpleLensStore(list.foldLeft(Map[String, Lens[Mirror, _]]())((acc, ll) => acc + (ll.name -> ll.toLens)))
 }
 

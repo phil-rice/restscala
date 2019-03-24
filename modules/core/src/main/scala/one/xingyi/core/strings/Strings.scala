@@ -4,6 +4,10 @@ package one.xingyi.core.strings
 import java.io.{ByteArrayOutputStream, PrintStream, StringWriter}
 
 object Strings {
+  def quote(str: String): String = "\"" + escapeJson(str) + "\""
+
+  def bracket(s: String) = "(" + s + ")"
+
 
   def partition(separator: String)(s: String): Option[(String, String)] = {
     val index = s.indexOf(separator)

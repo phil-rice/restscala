@@ -92,15 +92,11 @@ class Model3PersonDefn extends DomainDefn[IPerson, Person]("one.xingyi.scriptMod
     Telephone.telephoneOps -> Telephone.projection),
   List(
     new IPersonAddressOps[XingYiManualPath, IPerson, IAddress] {
-      override def addressLens = XingYiManualPath[IPerson, IAddress]("lens_person_address_address", "objectLens",
-        """function lens_person_address_address() { return compose(lens_person_addresses_addresslist(), lensForFirstItemInList())}""", isList = true)
+      override def addressLens = XingYiManualPath[IPerson, IAddress]("lens_person_address_address=addresses,#0,{string}")
     },
     new IPersonLine12Ops[XingYiManualPath, IPerson] {
-      override val line1Lens = XingYiManualPath[IPerson, String]("lens_person_line1_string", "stringLens",
-        """function lens_person_line1_string() { return compose(lens_person_address_address(), lens("line1"))}""")
-
-      override def line2Lens = XingYiManualPath[IPerson, String]("lens_person_line2_string", "stringLens",
-        """function lens_person_line2_string() { return compose(lens_person_address_address(), lens("line2"))}""")
+      override val line1Lens = XingYiManualPath[IPerson, String]("lens_person_line1_string=addresses,*,#0,line1,{string}")
+      override val line2Lens = XingYiManualPath[IPerson, String]("lens_person_line2_string=addresses,*,#last,line2,{string}")
     })) {
   override def packageName: String = "one.xingyi.scriptExample.createdCode"
 
@@ -110,15 +106,5 @@ class Model3AddressDefn extends DomainDefn[IAddress, Address]("one.xingyi.script
   List(Address.addressOps -> Address.projection),
   List()) {
   override def packageName: String = "one.xingyi.scriptExample.createdCode"
-
   override def domainName: String = "Address"
 }
-
-
-//object TestItQuick2 extends App {
-//  //  val x: ToScalaCode[IXingYiLensAndLensDefn] => ToScalaCode[InterfaceAndLens[Any, Any]] = ToScalaCode.makeScaleForInterface[Any, Any]
-//  //  ToScalaCode.makeScaleForInterface[Any, Any]
-//  //  val x = ToScalaCode.makeScalaCode[DomainDefn[Person]]
-//  val makeScala = implicitly[ToScalaCode[DomainDefn[IPerson, Person]]]
-//  println(makeScala(new Model3PersonDefn))
-//}

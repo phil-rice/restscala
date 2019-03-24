@@ -7,6 +7,6 @@ import one.xingyi.core.optics.Lens
 class ViewNamesToViewLens(map: Map[String, Lens[_, _]]) {
   def legalValues = map.keySet.toList.sorted
   def contains(name: String) = map.contains(name)
-  def lens(name: String) = map.get(name)
+  def apply(name: String) = map(name)
 
 }

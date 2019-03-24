@@ -37,7 +37,7 @@ class BooleanLensDefn[From]() extends JsonLensDefn[From, Boolean] {
   override def lens(implicit jsonParserWriter: JsonParserWriter[From]): Lens[From, Boolean] = jsonParserWriter.lensToBoolean
   override def toString: String = "{boolean}"
 }
-case class ViewLensDefn[From, To](name: String, lens: Lens[From, To]) extends LensDefn[From, To] {
+case class ViewLensDefn[From, To](name: String) extends LensDefn[From, To] {
   override def toString: String = "!" + name
 }
 
@@ -67,11 +67,11 @@ trait LensValueParser {
 }
 
 object LensValueParser {
-  implicit def simple(implicit viewNamesToViewLens: ViewNamesToViewLens): LensValueParser = new SimpleLensParser(viewNamesToViewLens)
+  implicit def simple: LensValueParser = new SimpleLensParser
 }
 
 
-class SimpleLensParser(viewNamesToViewLens: ViewNamesToViewLens) extends LensValueParser {
+class SimpleLensParser extends LensValueParser {
 
   override def apply(s: String): List[LensDefn[_, _]] = s.split(",").toList.map { item: String =>
     item match {
@@ -84,7 +84,7 @@ class SimpleLensParser(viewNamesToViewLens: ViewNamesToViewLens) extends LensVal
       case "*" => new ListLensDefn()
       case "#last" => new LastItemInListDefn()
       case n if n.startsWith("#") => ItemInListDefn(n.substring(1).toInt)
-      case name if name.startsWith("!") && viewNamesToViewLens.contains(name.substring(1)) => ViewLensDefn(name.substring(1), viewNamesToViewLens.lens(name.substring(1)).getOrElse(throw new RuntimeException(s"lens '$name references '$name but that is not a legal value. Legal values are ${viewNamesToViewLens.legalValues}")))
+      case name if name.startsWith("!") => ViewLensDefn(name.substring(1))
       case name => ChildLensDefn(name)
     }
   }
