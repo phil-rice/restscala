@@ -24,6 +24,7 @@ class StringLensDefn[From]() extends JsonLensDefn[From, String] {
 }
 case class ChildLensDefn[From](name: String) extends JsonLensDefn[From, From] {
   override def lens(implicit jsonParserWriter: JsonParserWriter[From]): Lens[From, From] = jsonParserWriter.lensToChild(name)
+  override def toString: String = name
 }
 class IntegerLensDefn[From]() extends JsonLensDefn[From, Int] {
   override def lens(implicit jsonParserWriter: JsonParserWriter[From]): Lens[From, Int] = jsonParserWriter.lensToInteger
