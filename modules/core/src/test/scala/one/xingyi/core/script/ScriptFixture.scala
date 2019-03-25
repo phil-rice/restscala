@@ -21,7 +21,7 @@ object ChildForTest {
   object parentChildrenOps extends IChildOps[IXingYiLens, IChild] {
     //    override def houseLens = XingYiDomainObjectLens(Lens[ParentForTest, HouseForTest](_.house, (p, h) => p.copy(house = h)))
     //    override def childrenLens = XingYiDomainObjectLens(Lens[ParentForTest, List[ChildForTest]](_.children, (p, c) => p.copy(children = c)))
-    override def nameLens = XingYiDomainStringLens(Lens[ChildForTest, String](_.name, (c, n) => c.copy(name = n)))
+    override def nameLens = XingYiDomainStringLens(Lens[ChildForTest, String](_.name, (c, n) => c.copy(name = n), Some("childNameL")))
   }
 
 
@@ -39,8 +39,8 @@ object HouseForTest {
   implicit val proofOfBinding: ProofOfBinding[IHouse, HouseForTest] = new ProofOfBinding
 
   implicit object houseOps extends IHouseOps[IXingYiLens, IHouse] {
-    override def houseNoLens = XingYiDomainStringLens(Lens[HouseForTest, String](_.houseNo.toString, (h, p) => h.copy(houseNo = p.toInt)))
-    override def postCodeLens = XingYiDomainStringLens(Lens[HouseForTest, String](_.postCode, (h, p) => h.copy(postCode = p)))
+    override def houseNoLens = XingYiDomainStringLens(Lens[HouseForTest, String](_.houseNo.toString, (h, p) => h.copy(houseNo = p.toInt), Some("houseNoL")))
+    override def postCodeLens = XingYiDomainStringLens(Lens[HouseForTest, String](_.postCode, (h, p) => h.copy(postCode = p), Some("postCodeL")))
   }
 
   implicit val projection = ObjectProjection(HouseForTest(123, "somePostcode"),
@@ -89,14 +89,14 @@ object ParentForTest {
 
 
   object parentNameOps extends IParentNameOps[IXingYiLens, IParent] {
-    override def nameLens = XingYiDomainStringLens(Lens[ParentForTest, String](_.name, (p, n) => p.copy(name = n)))
+    override def nameLens = XingYiDomainStringLens(Lens[ParentForTest, String](_.name, (p, n) => p.copy(name = n), Some("personNameL")))
   }
   object parentHouseOps extends IParentHouseOps[IXingYiLens, IParent, IHouse] {
-    override def houseLens = XingYiDomainObjectLens(Lens[ParentForTest, HouseForTest](_.house, (p, h) => p.copy(house = h)))
+    override def houseLens = XingYiDomainObjectLens(Lens[ParentForTest, HouseForTest](_.house, (p, h) => p.copy(house = h), Some("personHouseL")))
   }
   object parentChildrenOps extends IParentChildrenOps[IXingYiLens, IParent, IChild] {
     //    override def houseLens = XingYiDomainObjectLens(Lens[ParentForTest, HouseForTest](_.house, (p, h) => p.copy(house = h)))
-    override def childrenLens = XingYiDomainObjectLens(Lens[ParentForTest, List[ChildForTest]](_.children, (p, c) => p.copy(children = c)))
+    override def childrenLens = XingYiDomainObjectLens(Lens[ParentForTest, List[ChildForTest]](_.children, (p, c) => p.copy(children = c), Some("personChildrenL")))
   }
 
   implicit val parentProjection = ObjectProjection[IParent, ParentForTest](prototype,

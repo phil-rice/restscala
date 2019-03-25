@@ -15,15 +15,15 @@ import org.json4s.JValue
 
 case class ParentForTestClient(mirror: Object)
 object ParentForTestClient {
-  implicit def parentToMirror: Lens[ParentForTestClient, Object] = Lens[ParentForTestClient, Object](_.mirror, (p, m) => new ParentForTestClient(m))
+  implicit def parentToMirror: Lens[ParentForTestClient, Object] = Lens[ParentForTestClient, Object](_.mirror, (p, m) => new ParentForTestClient(m), Some("personToMirrorL"))
 }
 case class HouseForTestClient(mirror: Object)
 object HouseForTestClient {
-  implicit def houseToMirror: Lens[HouseForTestClient, Object] = Lens[HouseForTestClient, Object](_.mirror, (h, m) => new HouseForTestClient(m))
+  implicit def houseToMirror: Lens[HouseForTestClient, Object] = Lens[HouseForTestClient, Object](_.mirror, (h, m) => new HouseForTestClient(m), Some("houseToMirrorL"))
 }
 case class ChildForTestClient(mirror: Object)
 object ChildForTestClient {
-  implicit def childToMirror: Lens[ChildForTestClient, Object] = Lens[ChildForTestClient, Object](_.mirror, (c, m) => new ChildForTestClient(m))
+  implicit def childToMirror: Lens[ChildForTestClient, Object] = Lens[ChildForTestClient, Object](_.mirror, (c, m) => new ChildForTestClient(m), Some("childToMirrorL"))
 }
 trait ClientSideViews {
   implicit val viewNamesToViewLens = new ViewNamesToViewLens(Map(
@@ -49,6 +49,7 @@ abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage
     val (lensLanguage, domainDetails) = domainList.accept(None, defaultLensLanguage)
     lensLanguage shouldBe defaultLensLanguage
     val CodeDetails(code) = domainDetails.code(lensLanguage)
+    println(code)
     implicit val xingyi = implicitly[IXingYiLoader].apply(code)
     fn(xingyi)
   }
@@ -73,8 +74,11 @@ abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage
     setup { implicit xingyi =>
       val json = jsonWriter(ParentForTest.parentProjection.toJson(parent))
       val person = xingyi.parse[Parent](json)
-      val housePostcodeLens = (new ParentHouseOps).houseLens andThen (new HouseOps).postCodeLens
+      val houseLens = (new ParentHouseOps).houseLens
+      val housePostcodeLens = houseLens andThen (new HouseOps).postCodeLens
 
+      println("HouseLens: " + houseLens)
+      println("HouseLens: " + houseLens.get(person))
       val person2 = housePostcodeLens.set(person, "NewPostCode")
       val person3 = housePostcodeLens.set(person2, "NewerPostCode")
 

@@ -5,7 +5,7 @@ import one.xingyi.core.crypto.Codec
 
 object Lens {
   implicit def identity[X] = Lens[X, X](a => a, (a, b) => b, name = Some("{identity}"))
-  def cast[X, Y] = Lens[X, Y](a => a.asInstanceOf[Y], (a, b) => b.asInstanceOf[X])
+  def cast[X, Y] = Lens[X, Y](a => a.asInstanceOf[Y], (a, b) => b.asInstanceOf[X], name=Some("cast"))
 
   def itemInListL[T](n: Int): Lens[List[T], T] = Lens(_ (n), (ts, t) => ts.updated(n, t), name = Some("#" + n))
   def apply[A, B](get: A => B, set: (A, B) => A, name: Option[String] = None): Lens[A, B] = SimpleLens(get, set, name)
@@ -38,6 +38,6 @@ trait DelegateLens[A, B] extends Lens[A, B] {
   override def set: (A, B) => A = lens.set
 }
 case class SimpleLens[A, B](get: A => B, set: (A, B) => A, name: Option[String] = None) extends Lens[A, B] {
-  override def toString() = name.fold(super.toString())(n => s"Lens $n end")
+  override def toString() = name.fold(super.toString())(n => s"Lens($n)")
 }
 

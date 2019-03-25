@@ -45,17 +45,12 @@ trait Json4sParserWriter {
       case _ => throw new RuntimeException(s"Cannot extract '$childName' from '$j' as it isn't an object")
     }
 
-    //    def asList: (JValue => List[JValue]) = {
-    //      case JArray(arr) => arr
-    //      case j => throw new RuntimeException(s"Cannot extract list from '$j' as it isn't a jarray")
-    //    }
     override def lensToChild(childname: String): Lens[JValue, JValue] = Lens(_ \ childname, addChild(childname), name = Some("child " + childname))
-
     override val lensToString: Lens[JValue, String] = Lens[JValue, String](_.extract[String], (j, s) => JString(s), name = Some("{string}"))
     override val lensToDouble: Lens[JValue, Double] = Lens[JValue, Double](_.extract[Double], (j, s) => JDouble(s), name = Some("{double}"))
     override val lensToInteger: Lens[JValue, Int] = Lens[JValue, Int](_.extract[Int], (j, s) => JInt(s), name = Some("{integer}"))
     override def lensToList: Lens[JValue, List[JValue]] = Lens[JValue, List[JValue]](asList, (j, listt) => JArray(listt), name = Some("*"))
-    override def lensToBoolean: Lens[JValue, Boolean] = Lens[JValue, Boolean](_.extract[Boolean], (j,b) => JBool(b))
+    override def lensToBoolean: Lens[JValue, Boolean] = Lens[JValue, Boolean](_.extract[Boolean], (j,b) => JBool(b), Some("{boolean}"))
   }
 }
 
