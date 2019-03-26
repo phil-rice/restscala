@@ -12,11 +12,11 @@ trait LensDsl extends LensLanguage {
 
 object LensDsl extends LensDsl {
 
-  object lensCodeMaker extends LensCodeMaker[LensDsl] {
-    def one(line: LensLine) = line.name + "="+line.defns.map(_.toString).mkString(",")
+  implicit object lensCodeMaker extends LensCodeMaker[LensDsl] {
+    def one(line: LensLine) = line.name + "=" + line.defns.map(_.toString).mkString(",")
 
     override def apply[SharedE, DomainE](domainDefn: DomainDefn[SharedE, DomainE]): String =
-      domainDefn.lens.map(_.lensLine).map(one).mkString("\n")
+      domainDefn.lens.map(_.lensLine).map(one).mkString(";\n")
 
   }
 }

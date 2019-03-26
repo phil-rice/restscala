@@ -21,7 +21,7 @@ class DefaultXingYiHeaderToLensNames(implicit lensLanguages: LensLanguages) exte
       if (!header.startsWith(DomainDefn.xingyiHeaderPrefix)) throw new RuntimeException(s"Must start with ${DomainDefn.xingyiHeaderPrefix} actually is $header")
       val withoutPrefix = header.substring(DomainDefn.xingyiHeaderPrefix.length)
       val (languageName, lens) = partition(".")(withoutPrefix).fold(throw new RuntimeException(s"There must be a language name after the '.'. The header was $header"))(x => x)
-      val lensLanguage = lensLanguages.find(languageName).getOrElse(throw new RuntimeException(s"Language: $language not known. Legal values ${lensLanguages.legalValues}. Header is $header")).lensL
+      val lensLanguage = lensLanguages.find(languageName).getOrElse(throw new RuntimeException(s"Language: ${languageName} not known. Legal values ${lensLanguages.legalValues}. Header is $header")).lensL
       Some(XingYiHeaderDetails(lensLanguage, DomainList.stringToSet(lens)))
     }
     else

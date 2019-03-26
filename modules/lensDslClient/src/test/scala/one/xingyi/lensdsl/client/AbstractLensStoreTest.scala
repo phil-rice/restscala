@@ -21,14 +21,14 @@ class AbstractLensStoreTest[J](implicit json: JsonParserWriter[J]) extends Utils
   val j = json(jsonString)
 
   val lens =
-    """aLens=a,{integer}
-      |bLens=b,{boolean}
-      |cLens=c,{double}
-      |dLens=d,{string}
-      |eList=e,*
-      |e0Lens=e,*,#0,{integer}
-      |e1Lens=e,*,#1,{integer}
-      |elastLens=e,*,#last,{integer}
+    """aLens=a,{integer};
+      |bLens=b,{boolean};
+      |cLens=c,{double};
+      |dLens=d,{string};
+      |eList=e,*;
+      |e0Lens=e,*,#0,{integer};
+      |e1Lens=e,*,#1,{integer};
+      |elastLens=e,*,#last,{integer};
       |fLens=f,!F""".stripMargin
 
 

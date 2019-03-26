@@ -11,10 +11,11 @@ import one.xingyi.core.language.MicroserviceComposers
 import one.xingyi.core.logging._
 import one.xingyi.core.monad._
 import one.xingyi.core.objectify._
-import one.xingyi.core.script.{ClientPreferedLanguage, EntityDetailsUrl, IXingYiLoader, XingyiKleisli}
+import one.xingyi.core.script.{Domain => _, _}
 import one.xingyi.core.strings.ToHtml
 import one.xingyi.javascript.client.JavascriptXingYiLoader
-import one.xingyi.scriptExample.createdCode1.{Model1Defn, Person, PersonLine12Ops}
+import one.xingyi.lensdsl.client.{LensDslXingYi, LensDslXingYiLoader}
+import one.xingyi.scriptExample.createdCode1.{Model1Defn, Person, PersonLine12Ops, TelephoneNumber}
 import one.xingyi.simplewebframework.HttpClient
 import one.xingyi.simplewebframework.simpleServer.CheapServer
 import org.json4s.JValue
@@ -80,6 +81,7 @@ class Website[M[_] : Async, Fail: Failer : LogRequestAndResult, J: JsonParser : 
 object Website extends App {
 
   import one.xingyi.json4s.Json4sParserWriter._
+  import LensDslXingYiLoader._
 
   implicit val logger: LoggingAdapter = PrintlnLoggingAdapter
 
@@ -87,8 +89,14 @@ object Website extends App {
 
   println("Checking backend")
 
-  implicit val clientPreferedLanguage = ClientPreferedLanguage("Javascript")
-  implicit val xingyiLoader = new JavascriptXingYiLoader
+  implicit val clientPreferedLanguage = ClientPreferedLanguage("lensdsl")
+  implicit val viewNamesToViewLens = new ViewNamesToViewLens(Map(
+    "person" -> Person.forJson.lens,
+    "telephonenumber" -> TelephoneNumber.default.lens
+  ))
+
+
+  LensDslXingYiLoader.loader[JValue]
   val website = new Website[IdentityMonad, Throwable, JValue]
   val server = new CheapServer[IdentityMonad, Throwable](9000, website.endpoints)
   println("running")
