@@ -105,15 +105,6 @@ abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage
       nameLens.get(person3) shouldBe "newerChildName"
     }
   }
-
-
-  //  it should "allow lens to be processed on the client" in {
-  //    val (lensLanguage, domainDetails) = domainList.accept(None, defaultLensLanguage)
-  //    lensLanguage shouldBe defaultLensLanguage
-  //    val CodeDetails(code) = domainDetails.code(lensLanguage)
-  //
-  //
-  //  }
 }
 
 import one.xingyi.json4s.Json4sParserWriter._
