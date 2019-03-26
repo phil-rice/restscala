@@ -21,15 +21,13 @@ object Backend3 extends App {
 
   import SimpleLogRequestAndResult._
 
-  //  val defaultLanguage: Javascript = Javascript
-  val lensDsl: LensDsl = LensDsl
-//  println(lensDsl)
-  implicit val lensLanguages = LensLanguages(List(lensDsl))
+  implicit val lensLanguages = LensLanguages(List(LensDsl: LensDsl, Javascript: Javascript))
 
   implicit val personDomainList = DomainList(DomainDefnToDetails(new Model3PersonDefn))
+
   implicit val personStore = IEntityStore.demo[IdentityMonad, Throwable, IPerson, Person]
 
-  val personWebsite = new EntityEndpoints[IdentityMonad, Throwable, JValue, IPerson, Person](lensDsl)
+  val personWebsite = new EntityEndpoints[IdentityMonad, Throwable, JValue, IPerson, Person]
   val backend = new CheapServer[IdentityMonad, Throwable](9001, personWebsite.endpoints)
 
   println("running")

@@ -16,7 +16,7 @@ import one.xingyi.core.serverMediaType.{DomainList, LensLanguage, LensLanguages}
 import scala.language.higherKinds
 
 class EntityEndpoints[M[_] : Async, Fail, J: JsonParser : JsonWriter, SharedE, DomainE: Links : EntityPrefix]
-(defaultLanguage: LensLanguage)(implicit val monad: MonadCanFailWithException[M, Fail], val logReqAndResult: LogRequestAndResult[Fail],
+(implicit val monad: MonadCanFailWithException[M, Fail], val logReqAndResult: LogRequestAndResult[Fail],
                                 val failer: Failer[Fail],
                                 editEntityFailer: EditEntityRequestFailer[Fail],
                                 entityStoreFailer: IEntityStoreFailer[Fail],
@@ -31,7 +31,7 @@ class EntityEndpoints[M[_] : Async, Fail, J: JsonParser : JsonWriter, SharedE, D
 
 
   val entityCodeMaker = new EntityCodeMaker[M, Fail, SharedE, DomainE]
-  val entityMaker = new EntityMaker[M, Fail, SharedE, DomainE](List(Get, Post, Put), defaultLanguage)
+  val entityMaker = new EntityMaker[M, Fail, SharedE, DomainE](List(Get, Post, Put), lensLanguages.defaultLanguage)
 
   val keepAlive: ServiceRequest => M[Option[ServiceResponse]] = function[ServiceRequest, ServiceResponse]("keepalive")(sr => ServiceResponse("Alive")) |+| endpoint[ServiceRequest, ServiceResponse]("/ping", MatchesServiceRequest.fixedPath(Method("get")))
 

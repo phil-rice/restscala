@@ -18,6 +18,7 @@ trait LensLanguage {
 
 @implicitNotFound("""There must be a LensCodeMaker[$L] in scope""")
 case class LensLanguageAndCodeMaker[L <: LensLanguage](lensLanguage: L, lensCodeMaker: LensCodeMaker[L]) {
+  def language: LensLanguage = lensLanguage
   def matches(name: String) = lensLanguage.name.equalsIgnoreCase(name)
   def lensL: LensLanguage = lensLanguage
   def name: String = lensLanguage.name
@@ -31,7 +32,9 @@ object LensLanguageAndCodeMaker {
 }
 @implicitNotFound("""There must be a LensLanguages in scope on the server so that the server can work out how to code up the lens.""")
 case class LensLanguages(list: List[LensLanguageAndCodeMaker[_]] = List()) {
-//  def withLanguage[L <: LensLanguage](l: L)(implicit lensCodeMaker: LensCodeMaker[L]) = LensLanguages(list :+ LensLanguageAndCodeMaker.fromLensLanguage(l))
+  val defaultLanguage: LensLanguage = list.head.language
+
+  //  def withLanguage[L <: LensLanguage](l: L)(implicit lensCodeMaker: LensCodeMaker[L]) = LensLanguages(list :+ LensLanguageAndCodeMaker.fromLensLanguage(l))
   val legalValues = list.map(_.name)
 
   def find(name: String): Option[LensLanguageAndCodeMaker[_]] = list.find(_.matches(name))

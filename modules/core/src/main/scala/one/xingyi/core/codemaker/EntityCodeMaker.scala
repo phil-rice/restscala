@@ -49,7 +49,7 @@ class EntityMaker[M[_], Fail, SharedE, DomainE: Links](methods: List[Method],def
   import one.xingyi.core.language.MonadLanguage._
 
   val details = function[EntityServiceFinderRequest, EntityServiceFinderResponse](s"$entityPrefix.persondetails")(
-    req => EntityServiceFinderResponse(req.host, s"http://${req.host}/code/<hash>", s"http://${req.host}/$entityPrefix/<id>", methods.map(_.toString), domainList)
+    req => EntityServiceFinderResponse(req.host, s"http://${req.host}/code/<hash>", s"http://${req.host}/$entityPrefix/<id>", methods.map(_.toString), domainList, lensLanguages)
   )
   def detailsEndpoint[J: JsonWriter] =
     details |+| endpoint[EntityServiceFinderRequest, EntityServiceFinderResponse](s"/$entityPrefix", MatchesServiceRequest.fixedPath(Method("get")))

@@ -5,7 +5,7 @@ import one.xingyi.core.http.FromServiceRequest
 import one.xingyi.core.json._
 import one.xingyi.core.language.AnyLanguage._
 import one.xingyi.core.monad.{Monad, MonadCanFailWithException}
-import one.xingyi.core.serverMediaType.DomainList
+import one.xingyi.core.serverMediaType.{DomainList, LensLanguages}
 
 import scala.language.higherKinds
 
@@ -15,7 +15,7 @@ object EntityServiceFinderRequest {
     sr => failer.failOrUseHost(sr)(host => EntityServiceFinderRequest(host).liftM)
 }
 
-case class EntityServiceFinderResponse(hostAndPort: String, codePattern: String, urlPattern: String, supportedVerbs: List[String], domainList: DomainList[_, _])
+case class EntityServiceFinderResponse(hostAndPort: String, codePattern: String, urlPattern: String, supportedVerbs: List[String], domainList: DomainList[_, _], languages: LensLanguages)
 object EntityServiceFinderResponse extends JsonWriterLanguage {
   implicit def toJson[J: JsonWriter]: ToJsonLib[EntityServiceFinderResponse] = { res =>
     import res._
@@ -23,6 +23,7 @@ object EntityServiceFinderResponse extends JsonWriterLanguage {
 
     JsonObject(
       "url" -> urlPattern.replace("<host>", hostAndPort), "verbs" -> JsonList(supportedVerbs.map(JsonString.apply)),
+      "languages" -> JsonList(languages.legalValues.map(JsonString.apply)),
       "domains" -> JsonList(
         domainList.domains.map { d =>
           JsonObject(
