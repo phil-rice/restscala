@@ -2,6 +2,7 @@
 package one.xingyi.core.script
 
 import javax.script.{Invocable, ScriptEngine}
+import one.xingyi.core.client.ClientLanguage
 import one.xingyi.core.crypto.Codec
 import one.xingyi.core.http._
 import one.xingyi.core.id.HasId
@@ -30,14 +31,16 @@ trait DomainMaker[Dom <: Domain] {
   def create(mirror: Object): Dom
 }
 
-case class ClientPreferedLanguages(list: List[LensLanguage])
+case class ClientPreferedLanguages(list: List[ClientLanguage]){
+  def preferred: ClientLanguage = list.head
+}
 
 trait ServerDomain {
   def lens: List[String]
 
   val lensString = lens.mkString(",")
 
-  def contentType(implicit language: ClientPreferedLanguages): String = s"application/xingyi.${language.s}.$lensString"
+  def contentType(implicit languages: ClientPreferedLanguages): String = s"application/xingyi.${languages.preferred.language}.$lensString"
 
 }
 

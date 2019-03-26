@@ -1,11 +1,17 @@
 package one.xingyi.javascript.client
 
 import javax.script.{Invocable, ScriptEngine}
+import one.xingyi.core.client.ClientLanguage
 import one.xingyi.core.crypto.Codec
 import one.xingyi.core.optics.Lens
 import one.xingyi.core.script._
 
 import scala.language.postfixOps
+
+trait JavascriptClient extends ClientLanguage{
+  def language="javascript"
+}
+object JavascriptClient extends JavascriptClient
 
 class JavascriptXingYiLoader() extends IXingYiLoader {
   override def apply(javaScript: String): IXingYi = {

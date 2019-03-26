@@ -13,8 +13,8 @@ import one.xingyi.core.monad._
 import one.xingyi.core.objectify._
 import one.xingyi.core.script.{Domain => _, _}
 import one.xingyi.core.strings.ToHtml
-import one.xingyi.javascript.client.JavascriptXingYiLoader
-import one.xingyi.lensdsl.client.{LensDslXingYi, LensDslXingYiLoader}
+import one.xingyi.javascript.client.{JavascriptClient, JavascriptXingYiLoader}
+import one.xingyi.lensdsl.client.{LensDslClient, LensDslXingYi, LensDslXingYiLoader}
 import one.xingyi.scriptExample.createdCode1.{Model1Defn, Person, PersonLine12Ops, TelephoneNumber}
 import one.xingyi.simplewebframework.HttpClient
 import one.xingyi.simplewebframework.simpleServer.CheapServer
@@ -89,7 +89,7 @@ object Website extends App {
 
   println("Checking backend")
 
-  implicit val clientPreferedLanguage = ClientPreferedLanguages(List(LensDsl, Javascript))
+  implicit val clientPreferedLanguage = ClientPreferedLanguages(List(LensDslClient, JavascriptClient))
   implicit val viewNamesToViewLens = new ViewNamesToViewLens(Map(
     "person" -> Person.forJson.lens,
     "telephonenumber" -> TelephoneNumber.default.lens

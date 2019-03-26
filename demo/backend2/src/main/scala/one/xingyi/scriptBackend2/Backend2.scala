@@ -28,7 +28,7 @@ object Backend2 extends App {
   implicit val personStore = IEntityStore.demo[IdentityMonad, Throwable, IPerson, Person]
   implicit val addressStore = IEntityStore.demo[IdentityMonad, Throwable, IAddress, Address]
 
-  val websiteP = new EntityEndpoints[IdentityMonad, Throwable, JValue, IPerson, Person](defaultLanguage)
+  val websiteP = new EntityEndpoints[IdentityMonad, Throwable, JValue, IPerson, Person]
   //  val websiteA = new EntityEndpoints[IdentityMonad, Throwable, JValue, IAddress, Address]
   val backend = new CheapServer[IdentityMonad, Throwable](9001, websiteP.endpoints)
 

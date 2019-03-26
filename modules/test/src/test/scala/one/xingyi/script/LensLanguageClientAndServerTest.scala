@@ -5,7 +5,7 @@ import one.xingyi.core.json.{JsonParser, JsonWriter}
 import one.xingyi.core.optics.Lens
 import one.xingyi.core.script._
 import one.xingyi.core.serverMediaType.{CodeDetails, LensLanguage}
-import one.xingyi.javascript.client.JavascriptXingYiLoader
+import one.xingyi.javascript.client.{JavascriptClient, JavascriptXingYiLoader}
 import one.xingyi.javascript.server.Javascript
 import one.xingyi.lensdsl.client._
 import one.xingyi.lensdsl.server.{LensDsl, LensDslScriptFixture}
@@ -42,7 +42,7 @@ abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage
   implicit def loader: IXingYiLoader
 
   it should "be setup properly" in {
-    preferedLanguage.s shouldBe defaultLensLanguage.name
+    preferedLanguage.preferred.language shouldBe defaultLensLanguage.name
   }
 
   def setup(fn: (IXingYi) => Unit): Unit = {
@@ -119,11 +119,11 @@ abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage
 import one.xingyi.json4s.Json4sParserWriter._
 
 
-class JavascriptLensLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, Javascript](ClientPreferedLanguages("javascript")) with JavascriptScriptFixture {
+class JavascriptLensLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, Javascript](ClientPreferedLanguages(List(JavascriptClient, LensDslClient))) with JavascriptScriptFixture {
   override def loader: IXingYiLoader = new JavascriptXingYiLoader
 }
 
-class LensDSlLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, LensDsl](ClientPreferedLanguages("lensdsl")) with LensDslScriptFixture {
+class LensDSlLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, LensDsl](ClientPreferedLanguages(List(LensDslClient, JavascriptClient))) with LensDslScriptFixture {
   import ClientSideViews._
   override def loader: IXingYiLoader = LensDslXingYiLoader.loader[JValue]
 }
