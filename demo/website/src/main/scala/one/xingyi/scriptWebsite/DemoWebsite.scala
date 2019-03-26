@@ -30,7 +30,7 @@ case class MustacheToHtml[J: JsonWriter, T](templateName: String, title: String)
 
 class Website[M[_] : Async, Fail: Failer : LogRequestAndResult, J: JsonParser : JsonWriter]
 (implicit val monad: MonadCanFailWithException[M, Fail] with MonadWithState[M],
- clientPreferedLanguage: ClientPreferedLanguage,
+ clientPreferedLanguage: ClientPreferedLanguages,
  xingyiLoader: IXingYiLoader,
  val failer: Failer[Fail],
  val detailedLoggingForSR: DetailedLogging[ServiceResponse],
@@ -89,7 +89,7 @@ object Website extends App {
 
   println("Checking backend")
 
-  implicit val clientPreferedLanguage = ClientPreferedLanguage("lensdsl")
+  implicit val clientPreferedLanguage = ClientPreferedLanguages(List(LensDsl, Javascript))
   implicit val viewNamesToViewLens = new ViewNamesToViewLens(Map(
     "person" -> Person.forJson.lens,
     "telephonenumber" -> TelephoneNumber.default.lens

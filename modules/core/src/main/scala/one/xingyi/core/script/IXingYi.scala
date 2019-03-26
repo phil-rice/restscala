@@ -30,14 +30,14 @@ trait DomainMaker[Dom <: Domain] {
   def create(mirror: Object): Dom
 }
 
-case class ClientPreferedLanguage(s: String)
+case class ClientPreferedLanguages(list: List[LensLanguage])
 
 trait ServerDomain {
   def lens: List[String]
 
   val lensString = lens.mkString(",")
 
-  def contentType(implicit language: ClientPreferedLanguage): String = s"application/xingyi.${language.s}.$lensString"
+  def contentType(implicit language: ClientPreferedLanguages): String = s"application/xingyi.${language.s}.$lensString"
 
 }
 

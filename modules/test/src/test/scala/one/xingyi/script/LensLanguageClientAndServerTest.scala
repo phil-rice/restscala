@@ -34,7 +34,7 @@ trait ClientSideViews {
 }
 object ClientSideViews extends ClientSideViews
 
-abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage](preferedLanguage: ClientPreferedLanguage)(implicit jsonWriter: JsonWriter[J]) extends ScriptFixture[SL] with UtilsSpec with ClientSideViews {
+abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage](preferedLanguage: ClientPreferedLanguages)(implicit jsonWriter: JsonWriter[J]) extends ScriptFixture[SL] with UtilsSpec with ClientSideViews {
   behavior of "LensLanguage between client and server"
 
   val parent = ParentForTest("someName", 12, HouseForTest(5, "somePostCode"), List(ChildForTest("child1", 6), ChildForTest("child2", 7)))
@@ -119,11 +119,11 @@ abstract class LensLanguageClientAndServerTest[J: JsonParser, SL <: LensLanguage
 import one.xingyi.json4s.Json4sParserWriter._
 
 
-class JavascriptLensLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, Javascript](ClientPreferedLanguage("javascript")) with JavascriptScriptFixture {
+class JavascriptLensLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, Javascript](ClientPreferedLanguages("javascript")) with JavascriptScriptFixture {
   override def loader: IXingYiLoader = new JavascriptXingYiLoader
 }
 
-class LensDSlLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, LensDsl](ClientPreferedLanguage("lensdsl")) with LensDslScriptFixture {
+class LensDSlLanguageClientAndServerTest extends LensLanguageClientAndServerTest[JValue, LensDsl](ClientPreferedLanguages("lensdsl")) with LensDslScriptFixture {
   import ClientSideViews._
   override def loader: IXingYiLoader = LensDslXingYiLoader.loader[JValue]
 }
