@@ -41,12 +41,9 @@ class Website[M[_] : Async, Fail: Failer : LogRequestAndResult, J: JsonParser : 
 
   implicit val ssl: Option[SSLContext] = None
   private val domain: Domain = Domain(Protocol("http"), HostName("127.0.0.1"), Port(9001))
-  override implicit lazy val httpFactory = new HttpFactory[M, ServiceRequest, ServiceResponse] {
-    override def apply(v1: ServiceName) = {
-      val service = HttpClient.apply[M](domain)
-
-      { req => service(req.addHeader("host", domain.host + ":" + domain.port)) }
-    }
+  override implicit lazy val httpFactory = (v1: ServiceName) => {
+    val service = HttpClient.apply[M](domain);
+    { req => service(req.addHeader("host", domain.host + ":" + domain.port)) }
   }
 
   private val backend: ServiceRequest => M[ServiceResponse] = http(ServiceName("Backend"))
